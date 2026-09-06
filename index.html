@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AVORA OS">
+<meta name="theme-color" content="#15253D">
+<title>AVORA — Business Launch OS</title>
+<style>
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/ibm-plex/6.4.1/css/ibm-plex-mono.min.css');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/ibm-plex/6.4.1/css/ibm-plex-sans.min.css');
+
+  :root{
+    --navy:#15253D; --navy-2:#1D3350; --steel:#A7ADB3; --off:#F7F5EF; --black:#202226;
+    --sage:#708078; --sage-2:#8A9A8F; --line:#E7E3D6; --danger:#8C4A3D; --warn:#9C7C3E; --ok:#4B6B52;
+    --card:#FFFFFF; --radius:3px; --sidebar-w:238px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--off);color:var(--black);font-family:'IBM Plex Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .tracked{letter-spacing:0.09em;}
+  ::selection{background:var(--sage);color:#fff;}
+  button{font-family:inherit;cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+  a{color:inherit;}
+
+  #app{display:flex;min-height:100vh;}
+  #sidebar{width:var(--sidebar-w);background:var(--navy);color:var(--off);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+  .brand-block{padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.12);}
+  .brand-word{font-size:19px;font-weight:700;letter-spacing:0.12em;}
+  .brand-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;color:var(--steel);margin-top:3px;}
+  .founder-filter-block{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.12);}
+  .founder-filter-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;color:var(--steel);margin-bottom:6px;}
+  select.founder-select{width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);color:#fff;padding:7px 8px;border-radius:var(--radius);font-size:12px;}
+  select.founder-select option{color:#000;}
+  #navlist{flex:1;overflow-y:auto;padding:8px 0;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:12.5px;letter-spacing:0.03em;color:rgba(247,245,239,0.68);border-left:3px solid transparent;cursor:pointer;white-space:nowrap;}
+  .nav-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(247,245,239,0.4);width:16px;flex-shrink:0;}
+  .nav-item:hover{color:#fff;background:rgba(255,255,255,0.05);}
+  .nav-item.active{color:#fff;border-left-color:var(--sage-2);background:rgba(255,255,255,0.1);font-weight:700;}
+  .nav-item.active .nav-num{color:var(--sage-2);}
+  .sidebar-foot{padding:12px 20px 16px;border-top:1px solid rgba(255,255,255,0.12);font-size:11px;color:var(--steel);}
+
+  #main{flex:1;min-width:0;padding:26px 34px 90px;max-width:1320px;}
+  .page-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:22px;}
+  .page-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;color:var(--sage);text-transform:uppercase;}
+  .page-title{font-size:32px;font-weight:700;letter-spacing:-0.01em;margin-top:2px;line-height:1.15;}
+  .page-subtitle{font-size:14px;color:var(--steel);margin-top:6px;max-width:520px;line-height:1.5;}
+  .page-actions{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;}
+  @media(max-width:767px){
+    .page-title{font-size:25px;}
+    .page-subtitle{font-size:13px;}
+    .page-actions{width:100%;}
+    .page-actions .btn:not(.sm):not(.xs):not(.ghost){width:100%;}
+  }
+
+  .btn{border:1px solid var(--navy);background:var(--navy);color:#fff;padding:10px 18px;font-size:13px;font-weight:600;letter-spacing:0.02em;border-radius:var(--radius);}
+  .btn:hover{background:var(--navy-2);}
+  .btn.ghost{background:transparent;color:var(--navy);border:1px solid var(--line);font-weight:500;}
+  .btn.ghost:hover{border-color:var(--navy);}
+  .btn.sm{padding:7px 12px;font-size:12px;}
+  .btn.xs{padding:4px 8px;font-size:11px;}
+  .btn.danger{background:transparent;color:var(--danger);border:1px solid var(--danger);}
+  .btn.icon{width:26px;height:26px;padding:0;display:inline-flex;align-items:center;justify-content:center;}
+  .btn[disabled]{opacity:0.35;cursor:default;}
+  .btn.primary-mobile{width:100%;padding:14px;font-size:14px;}
+
+  .grid{display:grid;gap:16px;}
+  .grid-4{grid-template-columns:repeat(4,1fr);} .grid-3{grid-template-columns:repeat(3,1fr);} .grid-2{grid-template-columns:repeat(2,1fr);}
+  @media(max-width:1080px){.grid-4{grid-template-columns:repeat(2,1fr);} .grid-3{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:640px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr;}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;}
+  .card.tight{padding:15px;}
+  .stat-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;color:var(--steel);text-transform:uppercase;}
+  .widget-title{font-size:15px;font-weight:700;color:var(--black);}
+  .stat-value{font-size:24px;font-weight:700;margin-top:6px;letter-spacing:-0.01em;}
+  .stat-sub{font-size:11.5px;color:var(--steel);margin-top:4px;}
+
+  .section-title{font-size:15px;font-weight:700;margin:26px 0 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-left:10px;border-left:3px solid var(--sage);}
+  .section-title .count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);font-weight:400;}
+
+  .bar-track{background:var(--line);height:6px;border-radius:3px;overflow:hidden;margin-top:8px;}
+  .bar-fill{height:100%;background:var(--sage);}
+  .bar-fill.warn{background:var(--warn);} .bar-fill.danger{background:var(--danger);}
+
+  .badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.05em;padding:2px 7px;border-radius:2px;text-transform:uppercase;}
+  .badge.ok{background:rgba(75,107,82,0.12);color:var(--ok);}
+  .badge.warn{background:rgba(156,124,62,0.14);color:var(--warn);}
+  .badge.danger{background:rgba(140,74,61,0.13);color:var(--danger);}
+  .badge.neutral{background:var(--line);color:var(--black);}
+  .badge.navy{background:var(--navy);color:#fff;}
+  button.badge{border:none;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--steel);padding:8px 10px;border-bottom:1px solid var(--line);}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tr:hover td{background:rgba(0,0,0,0.015);}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);}
+  .table-wrap table{min-width:640px;}
+  .table-wrap.compact table{min-width:520px;}
+
+  /* mobile: turn key tables into stacked cards instead of forcing horizontal scroll */
+  @media(max-width:680px){
+    .table-wrap.stack-mobile table{min-width:0;width:100%;}
+    .table-wrap.stack-mobile thead{display:none;}
+    .table-wrap.stack-mobile tbody tr{display:block;border-bottom:6px solid var(--off);padding:12px 12px 10px;}
+    .table-wrap.stack-mobile tbody tr:last-child{border-bottom:none;}
+    .table-wrap.stack-mobile td{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:7px 0;}
+    .table-wrap.stack-mobile td:last-child{border-bottom:none;}
+    .table-wrap.stack-mobile td[data-label]::before{content:attr(data-label);font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.05em;text-transform:uppercase;color:var(--steel);flex-shrink:0;}
+    .table-wrap.stack-mobile td.td-title{display:block;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:2px;}
+    .table-wrap.stack-mobile td.td-title::before{content:none;}
+    .table-wrap.stack-mobile td select, .table-wrap.stack-mobile td input{width:auto;flex:1;max-width:60%;}
+  }
+
+  .attn-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);}
+  .attn-row:last-child{border-bottom:none;}
+  .attn-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--steel);}
+  .attn-dot.danger{background:var(--danger);} .attn-dot.warn{background:var(--warn);}
+  .attn-main{flex:1;min-width:0;}
+  .attn-title{font-size:13px;font-weight:600;}
+  .attn-meta{font-size:11.5px;color:var(--steel);margin-top:1px;}
+
+  .filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.03em;padding:6px 12px;border:1px solid var(--line);border-radius:20px;background:#fff;color:var(--black);}
+  .chip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .search-input{border:1px solid var(--line);padding:8px 12px;border-radius:var(--radius);font-size:13px;min-width:180px;background:#fff;}
+  select.sel, input.field, textarea.field{border:1px solid var(--line);padding:8px 10px;border-radius:var(--radius);font-size:13px;background:#fff;width:100%;}
+  label.flabel{font-size:11px;color:var(--steel);letter-spacing:0.02em;display:block;margin-bottom:4px;}
+  .field-row{margin-bottom:12px;}
+  .form-section{margin-bottom:16px;}
+  .form-section-title{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--sage);margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:6px;}
+
+  #modal-backdrop{position:fixed;inset:0;background:rgba(21,37,61,0.45);display:none;align-items:flex-start;justify-content:center;z-index:200;padding:36px 16px;overflow-y:auto;}
+  #modal-backdrop.open{display:flex;}
+  .modal{background:#fff;border-radius:var(--radius);max-width:600px;width:100%;padding:24px;}
+  .modal.wide{max-width:760px;}
+  .modal h3{margin:0 0 4px;font-size:19px;}
+  .modal .modal-sub{font-size:13px;color:var(--steel);margin-bottom:18px;}
+  .modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;border-top:1px solid var(--line);padding-top:16px;flex-wrap:wrap;}
+  .modal-foot .spacer{flex:1;}
+  .modal-tabs{display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:16px;overflow-x:auto;}
+  .modal-tab{padding:9px 13px;font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em;color:var(--steel);border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;white-space:nowrap;}
+  .modal-tab.active{color:var(--navy);border-bottom-color:var(--sage);background:rgba(112,128,120,0.08);}
+  @media(max-width:767px){
+    #modal-backdrop{align-items:flex-end;padding:0;}
+    .modal{max-width:100%;border-radius:16px 16px 0 0;padding:16px 18px calc(20px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto;animation:sheetUp .22s ease-out;}
+    .modal::before{content:'';display:block;width:36px;height:4px;background:var(--line);border-radius:2px;margin:0 auto 14px;}
+    .modal h3{font-size:18px;}
+    .modal-foot{position:sticky;bottom:-20px;background:#fff;margin-left:-18px;margin-right:-18px;padding:14px 18px calc(14px + env(safe-area-inset-bottom));}
+  }
+  @keyframes sheetUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:var(--radius);font-size:12.5px;z-index:300;opacity:0;pointer-events:none;transition:opacity .2s;}
+  #toast.show{opacity:1;}
+
+  .kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;}
+  .kanban-col{background:#F1EFE6;border:1px solid var(--line);border-radius:var(--radius);min-width:200px;flex:1;padding:10px;}
+  .kanban-col h4{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--steel);margin:0 0 8px;display:flex;justify-content:space-between;}
+  .kanban-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:9px 10px;margin-bottom:8px;font-size:12.5px;cursor:pointer;}
+  .kanban-card:hover{border-color:var(--sage);}
+  .kanban-card .kc-owner{font-size:10.5px;color:var(--steel);margin-top:4px;display:flex;justify-content:space-between;}
+
+  .fchip{display:inline-flex;align-items:center;gap:6px;font-size:12px;}
+  .fdot{width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+
+  .empty-state{text-align:center;padding:34px 20px;color:var(--steel);}
+  .empty-state .es-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--black);margin-bottom:6px;}
+  .empty-state .es-body{font-size:12.5px;max-width:360px;margin:0 auto 14px;}
+
+  .swatch{height:74px;border-radius:2px;display:flex;align-items:flex-end;padding:8px;position:relative;}
+  .swatch span{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3);}
+
+  #mobilenav{display:none;}
+  @media(max-width:880px){
+    #sidebar{display:none;}
+    #main{padding:16px 14px 90px;}
+    #mobilenav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--navy);z-index:150;border-top:1px solid rgba(255,255,255,0.1);}
+    .mnav-item{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 2px 8px;color:rgba(247,245,239,0.62);font-size:10px;font-weight:600;letter-spacing:0.03em;}
+    .mnav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;}
+    .mnav-item.active{color:#fff;}
+    .mnav-item.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2.5px;background:var(--sage-2);border-radius:0 0 2px 2px;}
+    .mtopbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:6px;flex-wrap:nowrap;}
+    .mtopbar .brand-word{color:var(--navy);font-size:14px;flex-shrink:0;}
+    .mtopbar select.sel{max-width:120px;font-size:11px;padding:7px 6px;}
+    .mtopbar .btn{padding:8px 10px;font-size:11px;flex-shrink:0;}
+    /* larger touch targets on small screens */
+    .btn.xs{padding:7px 11px;font-size:12px;min-height:32px;}
+    .btn.sm{padding:8px 13px;font-size:12.5px;min-height:34px;}
+    .widget-controls button{width:30px;height:30px;font-size:13px;}
+    .chip{padding:8px 14px;font-size:12px;}
+    select.sel, input.field, textarea.field{font-size:14px;padding:10px;}
+    .checklist-item input[type=checkbox]{width:19px;height:19px;}
+    td select.sel, td input.field{font-size:13px;padding:8px;}
+  }
+  #mobiletopbar{display:none;}
+  @media(max-width:880px){#mobiletopbar{display:flex;}}
+
+  .qadd-fab{position:fixed;right:20px;bottom:76px;width:52px;height:52px;border-radius:50%;background:var(--sage);color:#fff;border:none;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,0.25);z-index:160;}
+  @media(min-width:881px){.qadd-fab{right:34px;bottom:34px;}}
+
+  .two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+  #home-widgets{grid-template-columns:repeat(2,1fr);}
+  @media(max-width:880px){ #home-widgets{grid-template-columns:1fr;} #home-widgets .widget-wrap{grid-column:auto !important;} }
+  .divider{height:1px;background:var(--line);margin:16px 0;}
+
+  /* widget controls */
+  .widget-wrap{position:relative;padding-top:44px;}
+  .widget-controls{position:absolute;top:12px;right:12px;display:flex;gap:3px;}
+  .widget-controls button{background:transparent;border:1px solid var(--line);color:var(--steel);width:22px;height:22px;font-size:11px;border-radius:2px;line-height:1;}
+  .widget-controls button:hover{border-color:var(--navy);color:var(--navy);}
+
+  /* scatter */
+  .scatter-wrap{display:flex;gap:6px;}
+  .scatter-yaxis{display:flex;flex-direction:column;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);padding:6px 4px 26px 0;text-align:right;}
+  .scatter-plot{position:relative;flex:1;height:280px;border-left:1.5px solid var(--black);border-bottom:1.5px solid var(--black);background:#fff;}
+  .scatter-tick-x{position:absolute;bottom:-18px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);transform:translateX(-50%);}
+  .scatter-gridline{position:absolute;left:0;right:0;border-top:1px dashed var(--line);}
+  .scatter-quad-label{position:absolute;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.05em;color:var(--steel);opacity:0.55;}
+  .scatter-dot{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--navy);cursor:pointer;transform:translate(-50%,50%);border:2px solid #fff;box-shadow:0 0 0 1px var(--navy);}
+  .scatter-dot:hover{background:var(--sage);box-shadow:0 0 0 1px var(--sage);}
+  .scatter-xaxis-label, .scatter-yaxis-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:var(--black);text-align:center;}
+
+  /* checklist */
+  .checklist-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12.5px;}
+  .checklist-item input[type=checkbox]{width:15px;height:15px;flex-shrink:0;}
+  .checklist-item .cl-text.done{text-decoration:line-through;color:var(--steel);}
+  .checklist-item .cl-actions{display:flex;gap:2px;margin-left:auto;}
+
+  /* calendar */
+  .cal-controls{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+  .cal-headcell{background:#EFECE2;padding:7px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.05em;text-align:center;color:var(--steel);}
+  .cal-cell{background:#fff;min-height:86px;padding:6px;cursor:pointer;}
+  .cal-cell.other-month{background:#FAF9F5;color:var(--steel);}
+  .cal-cell.today{background:#F2F0E6;}
+  .cal-cell:hover{background:#F7F5EF;}
+  .cal-daynum{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);}
+  .cal-cell.today .cal-daynum{color:var(--navy);font-weight:700;}
+  .cal-event{font-size:10px;margin-top:3px;padding:1px 4px;border-radius:2px;background:var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cal-event.danger{background:rgba(140,74,61,0.16);color:var(--danger);}
+  @media(max-width:880px){
+    .cal-grid{grid-template-columns:1fr;}
+    .cal-headcell{display:none;}
+    .cal-cell{min-height:auto;display:flex;justify-content:space-between;align-items:center;padding:10px;}
+  }
+
+  /* notes tree */
+  .notes-layout{display:grid;grid-template-columns:230px 1fr;gap:16px;}
+  @media(max-width:880px){.notes-layout{grid-template-columns:1fr;}}
+  .tree{font-size:12.5px;}
+  .tree-item{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:2px;cursor:pointer;}
+  .tree-item:hover{background:#F1EFE6;}
+  .tree-item.active{background:var(--navy);color:#fff;}
+  .tree-children{margin-left:14px;border-left:1px solid var(--line);padding-left:4px;}
+  .note-body-render h4{font-size:14px;margin:10px 0 4px;}
+  .note-body-render h5{font-size:12.5px;margin:8px 0 4px;color:var(--steel);text-transform:uppercase;letter-spacing:0.04em;}
+  .note-body-render ul{margin:4px 0;padding-left:18px;}
+  .note-body-render .nb-check{display:flex;align-items:center;gap:6px;font-size:13px;padding:2px 0;cursor:pointer;}
+  .note-body-render .nb-check.done{color:var(--steel);text-decoration:line-through;}
+
+  .impact-effort{position:relative;height:260px;}
+  .archived-banner{background:#F1EFE6;border:1px solid var(--line);padding:8px 12px;font-size:11.5px;color:var(--steel);border-radius:2px;margin-bottom:12px;}
+  .tab-toggle{display:flex;gap:2px;border:1.5px solid var(--navy);border-radius:20px;padding:3px;width:fit-content;background:#fff;}
+  .tab-toggle .tt-item{padding:7px 16px;font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em;border-radius:16px;color:var(--navy);cursor:pointer;}
+  .tab-toggle .tt-item.active{background:var(--navy);color:#fff;}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="sidebar">
+    <div class="brand-block">
+      <div class="brand-word">AVORA</div>
+      <div class="brand-sub">BUSINESS LAUNCH OS</div>
+    </div>
+    <div class="founder-filter-block">
+      <div class="founder-filter-label mono">VIEWING</div>
+      <select class="founder-select" id="global-founder-select"></select>
+    </div>
+    <div id="navlist"></div>
+    <div class="sidebar-foot mono">V1 · Shared workspace</div>
+  </div>
+
+  <div id="main">
+    <div id="mobiletopbar" class="mtopbar">
+      <div class="brand-word mono tracked">AVORA</div>
+      <select class="sel" style="width:auto;font-size:11.5px;" id="global-founder-select-mobile"></select>
+      <button class="btn ghost sm" onclick="openMobileMenu()">MENU</button>
+    </div>
+    <div id="view"></div>
+  </div>
+</div>
+
+<button class="qadd-fab" onclick="openQuickAdd()" title="Quick add">+</button>
+
+<div id="mobilenav">
+  <div class="mnav-item" data-nav="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1v-9"/></svg>HOME</div>
+  <div class="mnav-item" data-nav="tasks"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 12l2.5 2.5L16 9"/></svg>TASKS</div>
+  <div class="mnav-item" data-nav="calendar"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17"/><path d="M8 3v4M16 3v4"/></svg>CAL</div>
+  <div class="mnav-item" data-nav="notes"><svg viewBox="0 0 24 24"><path d="M6 3.5h9l3 3V20a.6.6 0 01-.6.6H6.6A.6.6 0 016 20V3.5z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>NOTES</div>
+  <div class="mnav-item" data-nav="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>MORE</div>
+</div>
+
+<div id="modal-backdrop"><div class="modal" id="modal-body"></div></div>
+<div id="toast"></div>
+
+<script>
+/* =========================================================
+   AVORA BUSINESS LAUNCH OS — v2
+   Shared, editable, collaborative operating tool.
+   Persistence: window.storage (shared across founders on this artifact)
+   ========================================================= */
+
+const STORAGE_KEY = 'avora-os-state-v2';
+
+function uid(p){ return p+'-'+Math.random().toString(36).slice(2,9); }
+function esc(s){ return (s===undefined||s===null)?'':String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function daysBetween(a,b){ if(!a||!b) return null; return Math.ceil((new Date(b)-new Date(a))/86400000); }
+function fmtDate(d){ if(!d) return '—'; const dt=new Date(d+'T00:00:00'); if(isNaN(dt)) return '—'; return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function initials2(name){ return (name||'?').split(' ').map(w=>w[0]).filter(Boolean).join('').slice(0,2).toUpperCase()||'?'; }
+const CUR_SYMBOL = {GBP:'£',EUR:'€',USD:'$'};
+function curSym(c){ return CUR_SYMBOL[c]||'£'; }
+function fmtMoney(n,cur){ cur=cur||STATE.settings.currency; if(n===null||n===undefined||isNaN(n)) return curSym(cur)+'0.00'; const neg=n<0; n=Math.abs(n); return (neg?'-':'')+curSym(cur)+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtMoney0(n,cur){ cur=cur||STATE.settings.currency; if(n===null||n===undefined||isNaN(n)) return curSym(cur)+'0'; return curSym(cur)+Math.round(n).toLocaleString('en-GB'); }
+function addDays(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+
+/* ---------------- CLEAN SEED STATE ---------------- */
+/* Only confirmed AVORA project facts are pre-filled. Everything else starts empty. */
+function seedState(){
+  const founders = [
+    {id:'f1', name:'Founder 01', role:'Role not set', initials:'F1', primary:[], secondary:[]},
+    {id:'f2', name:'Founder 02', role:'Role not set', initials:'F2', primary:[], secondary:[]},
+    {id:'f3', name:'Founder 03', role:'Role not set', initials:'F3', primary:[], secondary:[]}
+  ];
+
+  // Confirmed from AVORA project storefront: SKU, name, category (where shown), RRP, and the one
+  // confirmed spec value (145 GSM for APT-001). Costs, suppliers, fabric composition etc. are NOT
+  // invented and are left blank for founders to fill in.
+  const products = [
+    {id:'p1', sku:'APT-001', name:'Performance T-Shirt', category:'Performance', collection:'Collection 001', status:'Idea', supplierId:'', colourways:['Navy','Off White','Sage','Black'], sizes:['XS','S','M','L','XL','XXL'], fabric:'', composition:'', gsm:145, targetCost:0, actualCost:0, rrp:78, currency:'EUR', moq:0, orderQty:0, sampleStatus:'', fitStatus:'', photography:'', website:'', launch:'', archived:false},
+    {id:'p2', sku:'APS-001', name:'Performance Shorts', category:'Performance', collection:'Collection 001', status:'Idea', supplierId:'', colourways:['Navy','Off White','Sage','Black'], sizes:['XS','S','M','L','XL','XXL'], fabric:'', composition:'', gsm:0, targetCost:0, actualCost:0, rrp:92, currency:'EUR', moq:0, orderQty:0, sampleStatus:'', fitStatus:'', photography:'', website:'', launch:'', archived:false},
+    {id:'p3', sku:'APQ-001', name:'Quarter Zip', category:'', collection:'Collection 001', status:'Idea', supplierId:'', colourways:['Navy','Sage'], sizes:['XS','S','M','L','XL','XXL'], fabric:'', composition:'', gsm:0, targetCost:0, actualCost:0, rrp:145, currency:'EUR', moq:0, orderQty:0, sampleStatus:'', fitStatus:'', photography:'', website:'', launch:'', archived:false},
+    {id:'p4', sku:'AAB-001', name:'Racket Holdall', category:'Accessories', collection:'Collection 001', status:'Idea', supplierId:'', colourways:['Navy'], sizes:['One Size'], fabric:'', composition:'', gsm:0, targetCost:0, actualCost:0, rrp:185, currency:'EUR', moq:0, orderQty:0, sampleStatus:'', fitStatus:'', photography:'', website:'', launch:'', archived:false}
+  ];
+
+  const inventory = [];
+  products.forEach(p=>p.colourways.forEach(c=>p.sizes.forEach(s=>{
+    inventory.push({id:uid('inv'), productId:p.id, colour:c, size:s, opening:0, incoming:0, reserved:0, sold:0, returned:0, damaged:0, samples:0, marketingStock:0});
+  })));
+
+  // Launch plan structure kept as the founders' own planning framework — every milestone reset to
+  // Not Started with no invented owner or deadline.
+  const phaseNames = [
+    ['Foundation',12,['Company name & registration','Founder agreement & equity split','Business bank account','Trademark search & application','Terms, privacy & returns policy']],
+    ['Brand',12,['Brand strategy & positioning','Primary logo & AV mark','Colour & typography system','Packaging & swing tag design','Brand guidelines document']],
+    ['Product Development',16,['Collection architecture finalised','Tech packs — all SKUs','Sample round reviewed','Fit approval — all SKUs','Production order placed']],
+    ['Suppliers & Sampling',10,['Manufacturer shortlist & quotes','Preferred manufacturer confirmed','Packaging supplier confirmed']],
+    ['Operations',8,['Fulfilment provider selected','SKU & inventory system live','Returns process defined']],
+    ['Website',14,['Store platform selected & configured','Product pages built — all SKUs','Payments & shipping tested','Mobile QA complete']],
+    ['Content',8,['Campaign photography shot','Launch content calendar built']],
+    ['Pre-Launch Marketing',10,['Social accounts live','Email capture live','Padel club partnerships in progress']],
+    ['Launch',6,['Final inventory check','Website QA sign-off','Launch day go/no-go']],
+    ['Post-Launch',4,['Week 1 sales review','Drop 002 planning kicked off']]
+  ];
+  const launchPhases = phaseNames.map(([name,weight,ms])=>({
+    id:uid('ph'), name, weight,
+    milestones: ms.map(m=>({id:uid('m'), name:m, owner:'', deadline:'', status:'Not Started', priority:'Medium', notes:''}))
+  }));
+
+  const drops = [
+    {id:uid('d'), number:1, name:'Collection 001', description:'Eight pieces. Court-tested construction, cut to be worn away from it.', status:'Planning', launchDate:'', designDeadline:'', samplingDeadline:'', productionDeadline:'', photographyDeadline:'', contentDeadline:'', campaignStart:'', budget:0, productIds:['p1','p2','p3','p4'], colourways:[], owner:'', secondaryOwner:'', notes:'', archived:false}
+  ];
+
+  const responsibilities = {
+    areas:['Brand','Product','Manufacturing','Suppliers','Finance','Operations','Website','Marketing','Social Media','Content','Partnerships','Customer Experience','Legal/Admin'],
+    assignments:{}
+  };
+
+  const brandColours = [
+    {id:'c1', name:'AVORA Navy', hex:'#15253D', role:'Primary — navigation, headlines', status:'Core', group:'Core Palette'},
+    {id:'c2', name:'Steel Grey', hex:'#A7ADB3', role:'Secondary information', status:'Core', group:'Core Palette'},
+    {id:'c3', name:'Off White', hex:'#F7F5EF', role:'Background', status:'Core', group:'Core Palette'},
+    {id:'c4', name:'Black', hex:'#202226', role:'Typography', status:'Core', group:'Core Palette'},
+    {id:'c5', name:'Sage Green', hex:'#708078', role:'Accent — used selectively', status:'Core', group:'Core Palette'}
+  ];
+  const brandLogos = [
+    {id:uid('lg'), name:'Primary Wordmark', type:'Primary Wordmark', version:'v1', status:'Approved', notes:'Established brand asset — do not redesign without founder approval.', date:'', approvedBy:'', archived:false},
+    {id:uid('lg'), name:'AV Performance Mark', type:'Secondary Mark', version:'v1', status:'Approved', notes:'Established brand asset — for labels, hardware and small-format use.', date:'', approvedBy:'', archived:false}
+  ];
+
+  return {
+    settings:{ founders, launchDate:'', currency:'GBP', lowStockThreshold:15, marginTarget:65, vatRegistered:false },
+    ui:{ activeFounderId:'all', homeMode:'team',
+      teamWidgetOrder:['readiness','attention','upcoming','founderWorkload','budget','productStatus','drops','decisions'], teamWidgetHidden:[],
+      myWidgetOrder:['myPriorities','myTasks','myOverdue','myUpcoming','mySupplierFollowups','myProjects','myNotes','waitingOnMe'], myWidgetHidden:[],
+      taskView:'list', taskTab:'tasks',
+      calMode:'month', calYear:new Date().getFullYear(), calMonth:new Date().getMonth(),
+      notesSelectedFolder:'root', ideaFilter:{}, brandTab:'overview', dropsView:'card'
+    },
+    tasks:[], launchPhases, products, inventory, suppliers:[], purchaseOrders:[], drops,
+    marketing:{content:[]}, ideas:[], decisions:[], risks:[], budget:[], founderContributions:[],
+    responsibilities,
+    notes:{ folders:[{id:'root', name:'Notes', parentId:null}, {id:'inbox', name:'Inbox', parentId:'root'}], items:[] },
+    brand:{ colours:brandColours, logos:brandLogos, mockups:[], notes:'' },
+    calendarEvents:[]
+  };
+}
+
+/* ---------------- STATE / PERSISTENCE ---------------- */
+/* Works two ways depending on where this file is running:
+   - Inside a Claude artifact: uses window.storage (shared across everyone viewing this artifact).
+   - Hosted anywhere else (e.g. Netlify): falls back to this browser's own localStorage.
+     That means each device/browser keeps its own separate copy of the data — it will NOT
+     automatically sync between founders unless they're all viewing the same Claude artifact. */
+let STATE=null, currentView='home';
+const HAS_ARTIFACT_STORAGE = (typeof window !== 'undefined' && typeof window.storage !== 'undefined');
+
+async function loadState(){
+  try{
+    if(HAS_ARTIFACT_STORAGE){
+      const res = await window.storage.get(STORAGE_KEY, true);
+      if(res && res.value){ STATE = JSON.parse(res.value); migrateState(); return; }
+    } else {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){ STATE = JSON.parse(raw); migrateState(); return; }
+    }
+    STATE = seedState(); await saveState();
+  }catch(e){ STATE = seedState(); }
+}
+function migrateState(){
+  // ensure any newly-added fields exist on older saved state
+  const seed = seedState();
+  if(!STATE.responsibilities) STATE.responsibilities = seed.responsibilities;
+  if(!STATE.notes) STATE.notes = seed.notes;
+  if(!STATE.brand) STATE.brand = seed.brand;
+  if(!STATE.calendarEvents) STATE.calendarEvents = [];
+  if(!STATE.ui.teamWidgetOrder) Object.assign(STATE.ui, {teamWidgetOrder:seed.ui.teamWidgetOrder, teamWidgetHidden:[], myWidgetOrder:seed.ui.myWidgetOrder, myWidgetHidden:[]});
+  if(STATE.ui.calYear===undefined){ STATE.ui.calYear=new Date().getFullYear(); STATE.ui.calMonth=new Date().getMonth(); STATE.ui.calMode='month'; }
+  if(!STATE.ui.taskTab) STATE.ui.taskTab='tasks';
+  if(!STATE.ui.brandTab) STATE.ui.brandTab='overview';
+  if(!STATE.ui.dropsView) STATE.ui.dropsView='card';
+  STATE.tasks.forEach(t=>{ if(!t.subtasks) t.subtasks=[]; if(t.support===undefined) t.support=[]; });
+}
+let saveTimer=null;
+async function saveState(){
+  try{
+    if(HAS_ARTIFACT_STORAGE){ await window.storage.set(STORAGE_KEY, JSON.stringify(STATE), true); }
+    else{ localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); }
+  }catch(e){ console.error('storage error', e); }
+}
+function persist(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveState,250); }
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),2200); }
+
+/* ---------------- NAV ---------------- */
+const NAV = [
+  {id:'home',num:'01',label:'Home'},{id:'tasks',num:'02',label:'Tasks'},{id:'launch',num:'03',label:'Launch Plan'},
+  {id:'products',num:'04',label:'Products'},{id:'inventory',num:'05',label:'Inventory'},{id:'finance',num:'06',label:'Finance'},
+  {id:'suppliers',num:'07',label:'Suppliers'},{id:'drops',num:'08',label:'Product Drops'},{id:'marketing',num:'09',label:'Marketing & Content'},
+  {id:'ideas',num:'10',label:'Ideas & Decisions'},{id:'calendar',num:'11',label:'Calendar'},{id:'notes',num:'12',label:'Notes'},
+  {id:'brand',num:'13',label:'Brand Lab'},{id:'settings',num:'14',label:'Settings'}
+];
+function renderSidebar(){
+  document.getElementById('navlist').innerHTML = NAV.map(n=>`<div class="nav-item ${currentView===n.id?'active':''}" data-nav="${n.id}"><span class="nav-num">${n.num}</span>${esc(n.label)}</div>`).join('');
+  document.querySelectorAll('#navlist .nav-item').forEach(el=>el.addEventListener('click',()=>go(el.dataset.nav)));
+  renderFounderSelect(document.getElementById('global-founder-select'));
+  renderFounderSelect(document.getElementById('global-founder-select-mobile'));
+  document.querySelectorAll('.mnav-item').forEach(el=>{ el.classList.toggle('active', el.dataset.nav===currentView); });
+}
+function renderFounderSelect(sel){
+  if(!sel) return;
+  sel.innerHTML = `<option value="all">All founders</option>` + STATE.settings.founders.map(f=>`<option value="${f.id}" ${STATE.ui.activeFounderId===f.id?'selected':''}>${esc(f.name)}</option>`).join('');
+  sel.value = STATE.ui.activeFounderId;
+  sel.onchange = e=>{ STATE.ui.activeFounderId=e.target.value; persist(); render(); };
+}
+function go(view){ currentView=view; render(); window.scrollTo(0,0); }
+document.querySelectorAll('.mnav-item').forEach(el=>{
+  el.addEventListener('click', ()=>{ if(el.dataset.nav==='more'){ openMobileMenu(); } else go(el.dataset.nav); });
+});
+function openMobileMenu(){
+  openModal(`<h3>Menu</h3><div class="modal-sub">Jump to any area</div>
+    <div style="display:flex;flex-direction:column;gap:4px;max-height:60vh;overflow-y:auto;">
+      ${NAV.map(n=>`<div style="display:flex;align-items:center;gap:12px;padding:13px 12px;border:1px solid var(--line);border-radius:2px;${currentView===n.id?'background:var(--navy);border-color:var(--navy);':''}" onclick="go('${n.id}');closeModal();">
+        <span class="mono" style="font-size:11px;color:${currentView===n.id?'var(--sage-2)':'var(--steel)'};width:20px;flex-shrink:0;">${n.num}</span>
+        <span style="font-size:14px;font-weight:600;color:${currentView===n.id?'#fff':'var(--black)'};">${esc(n.label)}</span>
+      </div>`).join('')}
+    </div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Close</button></div>`);
+}
+
+/* ---------------- SHARED HELPERS ---------------- */
+function founderName(id){ const f=STATE.settings.founders.find(x=>x.id===id); return f?f.name:'Unassigned'; }
+function ownerOptions(sel,allowEmpty){ return (allowEmpty!==false?'<option value="">Unassigned</option>':'')+STATE.settings.founders.map(f=>`<option value="${f.id}" ${sel===f.id?'selected':''}>${esc(f.name)}</option>`).join(''); }
+function productOptions(sel){ return '<option value="">—</option>'+STATE.products.filter(p=>!p.archived).map(p=>`<option value="${p.id}" ${sel===p.id?'selected':''}>${p.sku} — ${esc(p.name)}</option>`).join(''); }
+function supplierOptions(sel){ return '<option value="">—</option>'+STATE.suppliers.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${sel===s.id?'selected':''}>${esc(s.name)}</option>`).join(''); }
+function dropOptions(sel){ return '<option value="">—</option>'+STATE.drops.filter(d=>!d.archived).map(d=>`<option value="${d.id}" ${sel===d.id?'selected':''}>${esc(d.name)}</option>`).join(''); }
+function matchesFounder(id){ return STATE.ui.activeFounderId==='all' || id===STATE.ui.activeFounderId || (Array.isArray(id) && id.includes(STATE.ui.activeFounderId)); }
+function emptyState(title, body, actionLabel, actionFn){
+  return `<div class="empty-state"><div class="es-title mono">${esc(title)}</div><div class="es-body">${esc(body)}</div>${actionLabel?`<button class="btn ghost sm" onclick="${actionFn}">${esc(actionLabel)}</button>`:''}</div>`;
+}
+function confirmDelete(label, cb){
+  openModal(`<h3>Delete this ${esc(label)}?</h3><div class="modal-sub">This action cannot be undone.</div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn danger" onclick="(${cb.toString()})();closeModal();">Delete</button></div>`);
+}
+
+/* ---------------- CALCULATIONS ---------------- */
+function computeReadiness(){
+  const total = STATE.launchPhases.reduce((s,p)=>s+p.weight,0) || 1;
+  let weighted=0;
+  const perPhase = STATE.launchPhases.map(p=>{
+    const ms=p.milestones;
+    const val = ms.length ? ms.reduce((s,m)=>s+(m.status==='Complete'?1:m.status==='In Progress'?0.5:m.status==='Review'?0.75:0),0)/ms.length : 0;
+    weighted += val*p.weight;
+    return {name:p.name, pct:Math.round(val*100)};
+  });
+  return {overall:Math.round((weighted/total)*100), perPhase};
+}
+function productLandedCost(p){
+  const base = p.actualCost||p.targetCost||0;
+  const freight = base*0.06, duty = base*0.02, packaging = base>0?0.65:0;
+  return {base,freight,duty,packaging,landed:base+freight+duty+packaging};
+}
+function productMargin(p){
+  const {landed} = productLandedCost(p);
+  const rrp=p.rrp||0;
+  const netRevenue = STATE.settings.vatRegistered ? rrp/1.2 : rrp;
+  const profit = netRevenue-landed;
+  const marginPct = netRevenue>0 ? (profit/netRevenue*100) : 0;
+  const markupPct = landed>0 ? (profit/landed*100) : 0;
+  return {landed,netRevenue,profit,marginPct,markupPct};
+}
+function inventoryAvailable(r){ return r.opening+r.incoming-r.reserved-r.sold-r.damaged-r.samples-r.marketingStock; }
+function productStockTotal(id){ return STATE.inventory.filter(r=>r.productId===id).reduce((s,r)=>s+inventoryAvailable(r),0); }
+function budgetTotals(){
+  const totalBudget = STATE.budget.reduce((s,b)=>s+Number(b.budget||0),0);
+  const totalActual = STATE.budget.reduce((s,b)=> s+(b.paid?Number(b.actual||0):0),0);
+  const totalCommitted = STATE.budget.reduce((s,b)=> s+(!b.paid?Number(b.actual||b.budget||0):0),0);
+  const remaining = totalBudget-totalActual-totalCommitted;
+  return {totalBudget,totalActual,totalCommitted,remaining, pctUsed: totalBudget?Math.round(((totalActual+totalCommitted)/totalBudget)*100):0};
+}
+function founderBalances(){
+  const bal={}; STATE.settings.founders.forEach(f=>bal[f.id]={contributed:0,personallyPaid:0});
+  STATE.founderContributions.forEach(c=>{ if(!bal[c.founder]) return; if(c.type==='Expense Paid Personally') bal[c.founder].personallyPaid+=Number(c.amount||0); else bal[c.founder].contributed+=Number(c.amount||0); });
+  return bal;
+}
+function taskProgress(t){ if(!t.subtasks||!t.subtasks.length) return null; const done=t.subtasks.filter(s=>s.done).length; return {done,total:t.subtasks.length}; }
+function allEvents(){
+  const ev=[];
+  const today=todayISO();
+  STATE.tasks.forEach(t=>{ if(t.due && t.status!=='Complete') ev.push({date:t.due, title:t.name, type:'Task', sev: t.due<today?'danger':'', ref:{kind:'task',id:t.id}}); });
+  STATE.launchPhases.forEach(p=>p.milestones.forEach(m=>{ if(m.deadline && m.status!=='Complete') ev.push({date:m.deadline, title:m.name+' — '+p.name, type:'Launch', sev:m.deadline<today?'danger':'', ref:{kind:'milestone',phaseId:p.id,id:m.id}}); }));
+  STATE.drops.filter(d=>!d.archived).forEach(d=>{
+    [['launchDate','Launch — '],['designDeadline','Design deadline — '],['samplingDeadline','Sampling deadline — '],['productionDeadline','Production deadline — '],['photographyDeadline','Photography deadline — '],['contentDeadline','Content deadline — '],['campaignStart','Campaign start — ']].forEach(([f,label])=>{
+      if(d[f]) ev.push({date:d[f], title:label+d.name, type:'Product', sev:'', ref:{kind:'drop',id:d.id}});
+    });
+  });
+  STATE.marketing.content.forEach(c=>{ if(c.publishDate) ev.push({date:c.publishDate, title:c.title, type:'Content', sev:'', ref:{kind:'content',id:c.id}}); });
+  STATE.calendarEvents.forEach(c=>ev.push({date:c.date, title:c.title, type:c.type||'Other', sev:'', ref:{kind:'manual',id:c.id}, notes:c.notes}));
+  return ev;
+}
+function attentionItems(){
+  const items=[]; const today=todayISO();
+  STATE.tasks.forEach(t=>{
+    if(t.status!=='Complete' && t.due && t.due<today) items.push({sev:'danger', title:t.name, meta:`Overdue task · ${founderName(t.owner)} · due ${fmtDate(t.due)}`, go:'tasks'});
+    else if(t.status==='Blocked') items.push({sev:'warn', title:t.name, meta:`Blocked · ${founderName(t.owner)}`, go:'tasks'});
+  });
+  STATE.launchPhases.forEach(p=>p.milestones.forEach(m=>{ if(m.status!=='Complete' && m.deadline && m.deadline<today) items.push({sev:'danger', title:m.name, meta:`Overdue milestone · ${p.name}`, go:'launch'}); }));
+  STATE.inventory.forEach(r=>{ const avail=inventoryAvailable(r); if(avail<=STATE.settings.lowStockThreshold && avail>0){ const prod=STATE.products.find(p=>p.id===r.productId); if(prod) items.push({sev:'warn', title:`Low stock — ${prod.sku} ${r.colour} ${r.size}`, meta:`${avail} units available`, go:'inventory'}); } });
+  STATE.decisions.forEach(d=>{ if(!d.archived && (d.status==='Discussion'||d.status==='Proposed')) items.push({sev:'warn', title:`Unresolved decision — ${d.decision}`, meta:`${d.status} · ${d.area}`, go:'ideas'}); });
+  STATE.risks.forEach(r=>{ if(r.status==='Active' && r.impact==='Critical') items.push({sev:'danger', title:`Critical risk — ${r.risk}`, meta:`Owner ${founderName(r.owner)}`, go:'home'}); });
+  const b=budgetTotals(); if(b.totalBudget>0 && b.pctUsed>=90) items.push({sev:'danger', title:'Budget nearly exhausted', meta:`${b.pctUsed}% committed or spent`, go:'finance'});
+  STATE.suppliers.forEach(s=>{ if(s.status==='Testing') items.push({sev:'warn', title:`Follow up — ${s.name}`, meta:'Supplier still in testing status', go:'suppliers'}); });
+  return items;
+}
+
+/* ---------------- MODAL ---------------- */
+function openModal(html,wide){ const m=document.getElementById('modal-body'); m.className='modal'+(wide?' wide':''); m.innerHTML=html; document.getElementById('modal-backdrop').classList.add('open'); }
+function closeModal(){ document.getElementById('modal-backdrop').classList.remove('open'); }
+document.getElementById('modal-backdrop').addEventListener('click', e=>{ if(e.target.id==='modal-backdrop') closeModal(); });
+
+/* ================= QUICK ADD ================= */
+function openQuickAdd(){
+  openModal(`<h3>Quick add</h3><div class="modal-sub">Capture something in seconds</div>
+    <div class="grid grid-3" style="gap:8px;">
+      ${[['task','Task'],['note','Note'],['idea','Idea'],['expense','Expense'],['event','Calendar event'],['decision','Decision'],['supplier','Supplier'],['drop','Product drop'],['content','Content']]
+        .map(([k,l])=>`<button class="btn ghost sm" style="text-align:left;" onclick="quickAddForm('${k}')">${l}</button>`).join('')}
+    </div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button></div>`);
+}
+function quickAddForm(kind){
+  const af = STATE.ui.activeFounderId==='all' ? (STATE.settings.founders[0]?.id||'') : STATE.ui.activeFounderId;
+  const forms = {
+    task:`<h3>Add task</h3>
+      <div class="field-row"><label class="flabel">Task title</label><input class="field" id="qa-name" placeholder="e.g. Contact three packaging suppliers"></div>
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Owner</label><select class="sel" id="qa-owner">${ownerOptions(af,false)}</select></div>
+        <div class="field-row"><label class="flabel">Priority</label><select class="sel" id="qa-priority"><option>Critical</option><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Area</label><input class="field" id="qa-area" placeholder="Product / Brand / Finance..."></div>
+        <div class="field-row"><label class="flabel">Due date</label><input class="field" type="date" id="qa-due"></div>
+      </div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitQuickTask()">Save task</button></div>`,
+    note:`<h3>Quick note</h3>
+      <div class="field-row"><label class="flabel">Title</label><input class="field" id="qa-ntitle" placeholder="Note title"></div>
+      <div class="field-row"><label class="flabel">Note</label><textarea class="field" id="qa-nbody" rows="4" placeholder="Type your note..."></textarea></div>
+      <div class="field-row"><label class="flabel">Folder</label><select class="sel" id="qa-nfolder">${folderOptions('inbox')}</select></div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitQuickNote()">Save note</button></div>`,
+    idea:`<h3>Add idea</h3>
+      <div class="field-row"><label class="flabel">Idea</label><input class="field" id="qa-title" placeholder="e.g. Tonal woven care labels"></div>
+      <div class="field-row"><label class="flabel">Description</label><textarea class="field" id="qa-idesc" rows="2"></textarea></div>
+      <div class="grid grid-3">
+        <div class="field-row"><label class="flabel">Category</label><input class="field" id="qa-icat" placeholder="Product / Brand..."></div>
+        <div class="field-row"><label class="flabel">Impact (1–5)</label><input class="field" type="number" min="1" max="5" id="qa-impact" value="3"></div>
+        <div class="field-row"><label class="flabel">Effort (1–5)</label><input class="field" type="number" min="1" max="5" id="qa-effort" value="3"></div>
+      </div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitQuickIdea()">Save idea</button></div>`,
+    expense:`<h3>Add expense</h3>
+      <div class="field-row"><label class="flabel">Description</label><input class="field" id="qa-desc" placeholder="e.g. Second photography deposit"></div>
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Category</label><input class="field" id="qa-cat" placeholder="Marketing / Samples..."></div>
+        <div class="field-row"><label class="flabel">Amount (${curSym(STATE.settings.currency)})</label><input class="field" type="number" id="qa-budget" placeholder="0.00"></div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Paid by</label><select class="sel" id="qa-founder">${ownerOptions(af,false)}</select></div>
+        <div class="field-row"><label class="flabel">Already paid?</label><select class="sel" id="qa-paid"><option value="false">No — committed</option><option value="true">Yes</option></select></div>
+      </div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitQuickExpense()">Save expense</button></div>`,
+    event:`<h3>Add calendar event</h3>
+      <div class="field-row"><label class="flabel">Title</label><input class="field" id="qa-etitle" placeholder="Event title"></div>
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Date</label><input class="field" type="date" id="qa-edate"></div>
+        <div class="field-row"><label class="flabel">Type</label><select class="sel" id="qa-etype">${['Task','Launch','Product','Supplier','Payment','Content','Meeting','Marketing','Other'].map(t=>`<option>${t}</option>`).join('')}</select></div>
+      </div>
+      <div class="field-row"><label class="flabel">Notes</label><textarea class="field" id="qa-enotes" rows="2"></textarea></div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitQuickEvent()">Save event</button></div>`,
+    supplier:`<h3>Add supplier</h3>
+      <div class="field-row"><label class="flabel">Company</label><input class="field" id="qa-sname" placeholder="Supplier name"></div>
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Category</label><select class="sel" id="qa-scat"><option>Garment Manufacturer</option><option>Fabric</option><option>Packaging</option><option>Labels</option><option>Printing</option><option>Embroidery</option><option>Logistics</option><option>Photography</option><option>Creative</option><option>Other</option></select></div>
+        <div class="field-row"><label class="flabel">Location</label><input class="field" id="qa-sloc" placeholder="Country / city"></div>
+      </div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitQuickSupplier()">Save supplier</button></div>`,
+    drop:`<h3>Create product drop</h3>
+      <div class="field-row"><label class="flabel">Drop name</label><input class="field" id="qa-dropname" placeholder="e.g. Drop 002"></div>
+      <div class="field-row"><label class="flabel">Description</label><textarea class="field" id="qa-dropdesc" rows="2"></textarea></div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitQuickDrop()">Create drop</button></div>`,
+    content:`<h3>Add content idea</h3>
+      <div class="field-row"><label class="flabel">Title</label><input class="field" id="qa-ctitle" placeholder="e.g. Behind the seams — sample fitting"></div>
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Platform</label><select class="sel" id="qa-plat"><option>Instagram</option><option>TikTok</option><option>YouTube</option><option>Pinterest</option><option>Email</option><option>Other</option></select></div>
+        <div class="field-row"><label class="flabel">Pillar</label><input class="field" id="qa-pillar" placeholder="Product / Performance / Founder Story..."></div>
+      </div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitQuickContent()">Save content</button></div>`,
+    decision:`<h3>Log decision</h3>
+      <div class="field-row"><label class="flabel">Decision</label><input class="field" id="qa-dtitle" placeholder="What needs deciding?"></div>
+      <div class="field-row"><label class="flabel">Area</label><input class="field" id="qa-darea" placeholder="Product / Finance / Brand..."></div>
+      <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitQuickDecision()">Save decision</button></div>`
+  };
+  openModal(forms[kind]);
+}
+function submitQuickTask(){
+  const name=document.getElementById('qa-name').value.trim(); if(!name){showToast('Enter a task name');return;}
+  STATE.tasks.unshift({id:uid('t'), name, description:'', owner:document.getElementById('qa-owner').value, support:[], area:document.getElementById('qa-area').value||'General', project:'', productId:'', supplierId:'', dropId:'', priority:document.getElementById('qa-priority').value, status:'Not Started', start:'', due:document.getElementById('qa-due').value, effort:'', dependencies:'', recurring:false, subtasks:[], notes:'', blocker:'', created:todayISO(), completed:''});
+  persist(); closeModal(); showToast('Task added'); render();
+}
+function submitQuickNote(){
+  const title=document.getElementById('qa-ntitle').value.trim(); if(!title){showToast('Enter a title');return;}
+  const af = STATE.ui.activeFounderId==='all'?'':STATE.ui.activeFounderId;
+  STATE.notes.items.unshift({id:uid('n'), title, folderId:document.getElementById('qa-nfolder').value, createdBy:af, createdDate:todayISO(), editedDate:todayISO(), body:document.getElementById('qa-nbody').value, tags:[], productId:'', supplierId:'', dropId:'', archived:false});
+  persist(); closeModal(); showToast('Note saved'); render();
+}
+function submitQuickIdea(){
+  const title=document.getElementById('qa-title').value.trim(); if(!title){showToast('Enter an idea title');return;}
+  const af = STATE.ui.activeFounderId==='all'?'':STATE.ui.activeFounderId;
+  STATE.ideas.unshift({id:uid('i'), title, desc:document.getElementById('qa-idesc').value, category:document.getElementById('qa-icat').value||'General', submittedBy:af, owner:'', impact:Number(document.getElementById('qa-impact').value)||3, effort:Number(document.getElementById('qa-effort').value)||3, votes:{}, status:'Idea', dateAdded:todayISO(), tags:[], notes:'', archived:false});
+  persist(); closeModal(); showToast('Idea added'); render();
+}
+function submitQuickExpense(){
+  const description=document.getElementById('qa-desc').value.trim(); if(!description){showToast('Enter a description');return;}
+  STATE.budget.unshift({id:uid('b'), description, category:document.getElementById('qa-cat').value||'Miscellaneous', supplier:'', budget:Number(document.getElementById('qa-budget').value)||0, actual:Number(document.getElementById('qa-budget').value)||0, paid:document.getElementById('qa-paid').value==='true', founder:document.getElementById('qa-founder').value, notes:''});
+  persist(); closeModal(); showToast('Expense added'); render();
+}
+function submitQuickEvent(){
+  const title=document.getElementById('qa-etitle').value.trim(); const date=document.getElementById('qa-edate').value;
+  if(!title||!date){showToast('Enter a title and date');return;}
+  STATE.calendarEvents.unshift({id:uid('ce'), title, date, type:document.getElementById('qa-etype').value, notes:document.getElementById('qa-enotes').value});
+  persist(); closeModal(); showToast('Event added'); render();
+}
+function submitQuickSupplier(){
+  const name=document.getElementById('qa-sname').value.trim(); if(!name){showToast('Enter a supplier name');return;}
+  STATE.suppliers.unshift({id:uid('sup'), name, category:document.getElementById('qa-scat').value, contact:'', email:'', location:document.getElementById('qa-sloc').value, moq:0, leadTime:0, sampleCost:0, unitCost:0, paymentTerms:'', quality:0, reliability:0, status:'Testing', notes:'', archived:false});
+  persist(); closeModal(); showToast('Supplier added'); render();
+}
+function submitQuickDrop(){
+  const name=document.getElementById('qa-dropname').value.trim(); if(!name){showToast('Enter a drop name');return;}
+  const num = STATE.drops.length+1;
+  STATE.drops.push({id:uid('d'), number:num, name, description:document.getElementById('qa-dropdesc').value, status:'Idea', launchDate:'', designDeadline:'', samplingDeadline:'', productionDeadline:'', photographyDeadline:'', contentDeadline:'', campaignStart:'', budget:0, productIds:[], colourways:[], owner:'', secondaryOwner:'', notes:'', archived:false});
+  persist(); closeModal(); showToast('Drop created'); render();
+}
+function submitQuickContent(){
+  const title=document.getElementById('qa-ctitle').value.trim(); if(!title){showToast('Enter a title');return;}
+  const af = STATE.ui.activeFounderId==='all'?'':STATE.ui.activeFounderId;
+  STATE.marketing.content.unshift({id:uid('c'), title, platform:document.getElementById('qa-plat').value, pillar:document.getElementById('qa-pillar').value||'General', owner:af, status:'Idea', publishDate:'', dropId:''});
+  persist(); closeModal(); showToast('Content idea added'); render();
+}
+function submitQuickDecision(){
+  const decision=document.getElementById('qa-dtitle').value.trim(); if(!decision){showToast('Enter a decision');return;}
+  STATE.decisions.unshift({id:uid('de'), decision, date:'', area:document.getElementById('qa-darea').value||'General', options:'', made:'', reason:'', founders:[], status:'Proposed', archived:false});
+  persist(); closeModal(); showToast('Decision logged'); render();
+}
+
+/* ================= RENDER ROUTER ================= */
+function render(){
+  renderSidebar();
+  const renderers = {home:renderHome, tasks:renderTasks, launch:renderLaunch, products:renderProducts, inventory:renderInventory,
+    finance:renderFinance, suppliers:renderSuppliers, drops:renderDrops, marketing:renderMarketing, ideas:renderIdeas,
+    calendar:renderCalendar, notes:renderNotes, brand:renderBrand, settings:renderSettings};
+  document.getElementById('view').innerHTML = (renderers[currentView]||renderHome)();
+  attachViewHandlers();
+}
+function attachViewHandlers(){ /* per-view listeners attached inline via onclick/onchange in templates */ }
+
+/* ================= HOME (widget-based) ================= */
+const TEAM_WIDGET_DEFS = {
+  readiness:{label:'Launch Readiness', render:renderWidgetReadiness},
+  attention:{label:'Needs Attention', render:renderWidgetAttention},
+  upcoming:{label:'Upcoming Deadlines', render:renderWidgetUpcoming},
+  founderWorkload:{label:'Founder Workload', render:renderWidgetFounderWorkload},
+  budget:{label:'Budget Snapshot', render:renderWidgetBudget},
+  productStatus:{label:'Product Status', render:renderWidgetProductStatus},
+  drops:{label:'Product Drops', render:renderWidgetDrops},
+  decisions:{label:'Latest Decisions', render:renderWidgetDecisions}
+};
+const MY_WIDGET_DEFS = {
+  myPriorities:{label:'My Priorities', render:renderWidgetMyPriorities},
+  myTasks:{label:'My Tasks', render:renderWidgetMyTasks},
+  myOverdue:{label:'My Overdue Tasks', render:renderWidgetMyOverdue},
+  myUpcoming:{label:'My Upcoming Deadlines', render:renderWidgetMyUpcoming},
+  mySupplierFollowups:{label:'My Supplier Follow-ups', render:renderWidgetMySuppliers},
+  myProjects:{label:'My Products / Projects', render:renderWidgetMyProjects},
+  myNotes:{label:'My Recent Notes', render:renderWidgetMyNotes},
+  waitingOnMe:{label:'Waiting On Me', render:renderWidgetWaitingOnMe}
+};
+
+function renderHome(){
+  const mode = STATE.ui.homeMode;
+  const focusFounder = STATE.ui.activeFounderId!=='all' ? STATE.ui.activeFounderId : (mode==='my'? (STATE.settings.founders[0]?.id||'') : null);
+  const title = mode==='my' ? `${founderName(focusFounder)} — Workspace` : 'Business Launch OS';
+  const defs = mode==='my' ? MY_WIDGET_DEFS : TEAM_WIDGET_DEFS;
+  const order = mode==='my' ? STATE.ui.myWidgetOrder : STATE.ui.teamWidgetOrder;
+  const hidden = mode==='my' ? STATE.ui.myWidgetHidden : STATE.ui.teamWidgetHidden;
+  const visible = order.filter(id=>defs[id] && !hidden.includes(id));
+
+  return `
+  <div class="page-header">
+    <div><div class="page-eyebrow mono">Avora / Storefront — Home</div><div class="page-title">${esc(title)}</div><div class="page-subtitle">${mode==='my'? 'Your priorities, tasks and deadlines.' : 'Where AVORA stands right now.'}</div></div>
+    <div class="page-actions">
+      <div class="tab-toggle">
+        <div class="tt-item ${mode==='team'?'active':''}" onclick="setHomeMode('team')">TEAM VIEW</div>
+        <div class="tt-item ${mode==='my'?'active':''}" onclick="setHomeMode('my')">MY VIEW</div>
+      </div>
+      <button class="btn ghost sm" onclick="openCustomiseDashboard()">Customise dashboard</button>
+    </div>
+  </div>
+  <div class="grid grid-2" id="home-widgets">
+    ${visible.length? visible.map((id,idx)=>renderWidgetWrap(id, idx, visible.length, mode, defs[id])).join('') : emptyState('No widgets visible','All widgets are hidden for this view.','Customise dashboard',"openCustomiseDashboard()")}
+  </div>
+  `;
+}
+function renderWidgetWrap(id, idx, total, mode, def){
+  return `<div class="card widget-wrap" style="${(id==='attention'||id==='budget'||id==='founderWorkload')?'grid-column: span 2;':''}">
+    <div class="widget-controls">
+      <button title="Move up" ${idx===0?'disabled':''} onclick="moveWidget('${mode}','${id}',-1)">↑</button>
+      <button title="Move down" ${idx===total-1?'disabled':''} onclick="moveWidget('${mode}','${id}',1)">↓</button>
+      <button title="Hide widget" onclick="hideWidget('${mode}','${id}')">✕</button>
+    </div>
+    ${def.render()}
+  </div>`;
+}
+function setHomeMode(m){ STATE.ui.homeMode=m; persist(); render(); }
+function moveWidget(mode,id,dir){
+  const key = mode==='my'?'myWidgetOrder':'teamWidgetOrder';
+  const arr = STATE.ui[key]; const i=arr.indexOf(id); const j=i+dir;
+  if(j<0||j>=arr.length) return;
+  [arr[i],arr[j]]=[arr[j],arr[i]]; persist(); render();
+}
+function hideWidget(mode,id){
+  const key = mode==='my'?'myWidgetHidden':'teamWidgetHidden';
+  if(!STATE.ui[key].includes(id)) STATE.ui[key].push(id);
+  persist(); render();
+}
+function openCustomiseDashboard(){
+  const mode = STATE.ui.homeMode;
+  const defs = mode==='my'?MY_WIDGET_DEFS:TEAM_WIDGET_DEFS;
+  const order = mode==='my'?STATE.ui.myWidgetOrder:STATE.ui.teamWidgetOrder;
+  const hidden = mode==='my'?STATE.ui.myWidgetHidden:STATE.ui.teamWidgetHidden;
+  openModal(`<h3>Customise dashboard</h3><div class="modal-sub">${mode==='my'?'My View':'Team View'} widgets — show, hide and reorder</div>
+    <div style="display:flex;flex-direction:column;gap:4px;max-height:50vh;overflow-y:auto;">
+      ${order.map((id,idx)=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:2px;${hidden.includes(id)?'opacity:0.45;':''}">
+          <span style="flex:1;font-size:13px;">${esc(defs[id]?defs[id].label:id)}</span>
+          <button class="btn ghost xs" ${idx===0?'disabled':''} onclick="moveWidget('${mode}','${id}',-1);openCustomiseDashboard();">↑</button>
+          <button class="btn ghost xs" ${idx===order.length-1?'disabled':''} onclick="moveWidget('${mode}','${id}',1);openCustomiseDashboard();">↓</button>
+          <button class="btn ${hidden.includes(id)?'':'ghost'} xs" onclick="toggleWidgetVisible('${mode}','${id}');openCustomiseDashboard();">${hidden.includes(id)?'Restore':'Hide'}</button>
+        </div>
+      `).join('')}
+    </div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal();render();">Done</button></div>`);
+}
+function toggleWidgetVisible(mode,id){
+  const key = mode==='my'?'myWidgetHidden':'teamWidgetHidden';
+  const arr = STATE.ui[key];
+  const i = arr.indexOf(id);
+  if(i>=0) arr.splice(i,1); else arr.push(id);
+  persist();
+}
+
+/* --- team widgets --- */
+function renderWidgetReadiness(){
+  const r = computeReadiness();
+  const daysLeft = STATE.settings.launchDate ? daysBetween(todayISO(), STATE.settings.launchDate) : null;
+  const color = r.overall>=75?'ok':r.overall>=45?'warn':'danger';
+  return `<div class="widget-title">Launch readiness</div>
+    <div style="display:flex;align-items:baseline;gap:10px;"><div class="stat-value">${r.overall}%</div>${daysLeft!==null?`<span class="stat-sub">${daysLeft>=0?daysLeft+' days to launch':'Launch date passed'}</span>`:`<span class="stat-sub">Set a target launch date in Settings</span>`}</div>
+    <div class="bar-track"><div class="bar-fill ${color}" style="width:${r.overall}%"></div></div>
+    <div style="margin-top:14px;">
+      ${r.perPhase.map(p=>`<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:12px;"><span>${esc(p.name)}</span><span class="mono" style="color:var(--steel)">${p.pct}%</span></div><div class="bar-track"><div class="bar-fill ${p.pct>=75?'':p.pct>=40?'warn':'danger'}" style="width:${p.pct}%"></div></div></div>`).join('')}
+    </div>`;
+}
+function renderWidgetAttention(){
+  const attn = attentionItems();
+  return `<div class="widget-title">Needs attention <span class="mono" style="color:var(--black)">(${attn.length})</span></div>
+    <div style="margin-top:10px;">
+    ${attn.length? attn.slice(0,8).map(a=>`<div class="attn-row"><div class="attn-dot ${a.sev}"></div><div class="attn-main"><div class="attn-title">${esc(a.title)}</div><div class="attn-meta">${esc(a.meta)}</div></div><button class="btn ghost sm" onclick="go('${a.go}')">View</button></div>`).join('')
+    : emptyState('All clear','Nothing needs attention right now.')}
+    </div>`;
+}
+function renderWidgetUpcoming(){
+  const today=todayISO();
+  const ev = allEvents().filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
+  return `<div class="widget-title">Upcoming deadlines</div>
+    <div style="margin-top:10px;">
+    ${ev.length? ev.map(e=>`<div class="attn-row"><div class="attn-main"><div class="attn-title">${esc(e.title)}</div><div class="attn-meta">${e.type} · ${fmtDate(e.date)}</div></div></div>`).join('')
+    : emptyState('Nothing scheduled','Add tasks, drop deadlines or events to see them here.','Go to Calendar',"go('calendar')")}
+    </div>`;
+}
+function renderWidgetFounderWorkload(){
+  return `<div class="widget-title">Founder workload</div><div style="margin-top:10px;">
+    ${STATE.settings.founders.map(f=>{
+      const myTasks = STATE.tasks.filter(t=>t.owner===f.id && t.status!=='Complete');
+      const overdue = myTasks.filter(t=>t.due && t.due<todayISO()).length;
+      const critical = myTasks.filter(t=>t.priority==='Critical').length;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);">
+        <div class="fdot">${initials2(f.name)}</div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:600;">${esc(f.name)}</div><div class="stat-sub">${esc(f.role)}</div></div>
+        <div style="text-align:right;"><div class="mono" style="font-size:12px;">${myTasks.length} open</div>${overdue?`<div class="badge danger" style="margin-top:3px;">${overdue} overdue</div>`:critical?`<div class="badge warn" style="margin-top:3px;">${critical} critical</div>`:''}</div>
+      </div>`;
+    }).join('')}
+    </div>`;
+}
+function renderWidgetBudget(){
+  const b = budgetTotals();
+  if(b.totalBudget===0 && STATE.budget.length===0) return `<div class="widget-title">Budget snapshot</div>${emptyState('No budget recorded yet','Add startup expenses to track spend against budget.','Add expense',"quickAddForm('expense')")}`;
+  return `<div class="widget-title">Budget snapshot</div>
+    <div class="grid grid-3" style="margin-top:10px;">
+      <div><div class="stat-sub">Total budget</div><div style="font-size:17px;font-weight:700;">${fmtMoney0(b.totalBudget)}</div></div>
+      <div><div class="stat-sub">Spent / committed</div><div style="font-size:17px;font-weight:700;">${fmtMoney0(b.totalActual+b.totalCommitted)}</div></div>
+      <div><div class="stat-sub">Remaining</div><div style="font-size:17px;font-weight:700;color:${b.remaining<0?'var(--danger)':'inherit'}">${fmtMoney0(b.remaining)}</div></div>
+    </div>
+    <div class="bar-track"><div class="bar-fill ${b.pctUsed>90?'danger':b.pctUsed>70?'warn':''}" style="width:${Math.min(b.pctUsed,100)}%"></div></div>`;
+}
+function renderWidgetProductStatus(){
+  if(!STATE.products.length) return `<div class="widget-title">Product status</div>${emptyState('No products yet','Add products to track development status.','Go to Products',"go('products')")}`;
+  return `<div class="widget-title">Product status</div><div style="margin-top:10px;">
+    ${STATE.products.filter(p=>!p.archived).map(p=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px;"><span>${p.sku} — ${esc(p.name)}</span><span class="badge neutral">${esc(p.status)}</span></div>`).join('')}
+    </div>`;
+}
+function renderWidgetDrops(){
+  const active = STATE.drops.filter(d=>!d.archived);
+  if(!active.length) return `<div class="widget-title">Product drops</div>${emptyState('No product drops planned','Plan a future AVORA release.','Create product drop',"quickAddForm('drop')")}`;
+  return `<div class="widget-title">Product drops</div><div style="margin-top:10px;">
+    ${active.map(d=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);"><span style="font-size:13px;">${esc(d.name)}</span><span class="badge neutral">${esc(d.status)}</span></div>`).join('')}
+    </div>`;
+}
+function renderWidgetDecisions(){
+  const recent = STATE.decisions.filter(d=>!d.archived).slice(0,5);
+  if(!recent.length) return `<div class="widget-title">Latest decisions</div>${emptyState('No decisions logged','Keep important decisions out of group chats.','Log decision',"quickAddForm('decision')")}`;
+  return `<div class="widget-title">Latest decisions</div><div style="margin-top:10px;">
+    ${recent.map(d=>`<div style="padding:7px 0;border-bottom:1px solid var(--line);"><div style="font-size:12.5px;font-weight:600;">${esc(d.decision)}</div><div class="stat-sub">${esc(d.area)} · <span class="badge ${d.status==='Approved'?'ok':'warn'}">${esc(d.status)}</span></div></div>`).join('')}
+    </div>`;
+}
+
+/* --- my widgets --- */
+function myFid(){ return STATE.ui.activeFounderId!=='all' ? STATE.ui.activeFounderId : (STATE.settings.founders[0]?.id||''); }
+function renderWidgetMyPriorities(){
+  const fid=myFid(); const mine = STATE.tasks.filter(t=>t.owner===fid && t.status!=='Complete').sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')).slice(0,3);
+  return `<div class="widget-title">Your priorities</div><div style="margin-top:10px;">
+    ${mine.length? mine.map(t=>`<div class="attn-row"><div class="attn-dot ${t.priority==='Critical'?'danger':t.priority==='High'?'warn':''}"></div><div class="attn-main"><div class="attn-title">${esc(t.name)}</div><div class="attn-meta">${esc(t.area)} · due ${fmtDate(t.due)}</div></div></div>`).join('')
+    : emptyState('No open tasks assigned','Add one with Quick Add.','Add task',"quickAddForm('task')")}
+    </div>`;
+}
+function renderWidgetMyTasks(){
+  const fid=myFid(); const mine = STATE.tasks.filter(t=>t.owner===fid && t.status!=='Complete');
+  return `<div class="widget-title">My tasks <span class="mono" style="color:var(--black)">(${mine.length})</span></div><div style="margin-top:10px;">
+    ${mine.length? mine.slice(0,8).map(t=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px;"><span>${esc(t.name)}</span><span class="badge neutral">${esc(t.status)}</span></div>`).join('')
+    : emptyState('Nothing assigned to you','','Go to Tasks',"go('tasks')")}
+    </div>`;
+}
+function renderWidgetMyOverdue(){
+  const fid=myFid(); const mine = STATE.tasks.filter(t=>t.owner===fid && t.status!=='Complete' && t.due && t.due<todayISO());
+  return `<div class="widget-title">Overdue</div><div style="margin-top:10px;">
+    ${mine.length? mine.map(t=>`<div class="attn-row"><div class="attn-dot danger"></div><div class="attn-main"><div class="attn-title">${esc(t.name)}</div><div class="attn-meta">Due ${fmtDate(t.due)}</div></div></div>`).join('')
+    : emptyState('Nothing overdue','Good place to be.')}
+    </div>`;
+}
+function renderWidgetMyUpcoming(){
+  const fid=myFid(); const today=todayISO();
+  const mine = STATE.tasks.filter(t=>t.owner===fid && t.due && t.due>=today && t.status!=='Complete').sort((a,b)=>a.due.localeCompare(b.due)).slice(0,6);
+  return `<div class="widget-title">Upcoming deadlines</div><div style="margin-top:10px;">
+    ${mine.length? mine.map(t=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px;"><span>${esc(t.name)}</span><span class="mono" style="color:var(--steel)">${fmtDate(t.due)}</span></div>`).join('')
+    : emptyState('Nothing scheduled','')}
+    </div>`;
+}
+function renderWidgetMySuppliers(){
+  const fid=myFid();
+  const mine = STATE.suppliers.filter(s=>!s.archived && s.status==='Testing');
+  return `<div class="widget-title">Supplier follow-ups</div><div style="margin-top:10px;">
+    ${mine.length? mine.map(s=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px;"><span>${esc(s.name)}</span><span class="badge warn">Testing</span></div>`).join('')
+    : emptyState('No suppliers awaiting follow-up','','Go to Suppliers',"go('suppliers')")}
+    </div>`;
+}
+function renderWidgetMyProjects(){
+  const fid=myFid();
+  const drops = STATE.drops.filter(d=>!d.archived && (d.owner===fid||d.secondaryOwner===fid));
+  return `<div class="widget-title">My products / projects</div><div style="margin-top:10px;">
+    ${drops.length? drops.map(d=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px;"><span>${esc(d.name)}</span><span class="badge neutral">${esc(d.status)}</span></div>`).join('')
+    : emptyState('No projects assigned to you','Assign yourself as owner on a product drop.','Go to Product Drops',"go('drops')")}
+    </div>`;
+}
+function renderWidgetMyNotes(){
+  const fid=myFid();
+  const mine = STATE.notes.items.filter(n=>!n.archived && n.createdBy===fid).sort((a,b)=>(b.editedDate||'').localeCompare(a.editedDate||'')).slice(0,5);
+  return `<div class="widget-title">My recent notes</div><div style="margin-top:10px;">
+    ${mine.length? mine.map(n=>`<div style="padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px;">${esc(n.title)}</div>`).join('')
+    : emptyState('No notes yet','','Add note',"quickAddForm('note')")}
+    </div>`;
+}
+function renderWidgetWaitingOnMe(){
+  const fid=myFid();
+  const mine = STATE.tasks.filter(t=>t.status==='Waiting' && (t.support||[]).includes(fid));
+  return `<div class="widget-title">Waiting on me</div><div style="margin-top:10px;">
+    ${mine.length? mine.map(t=>`<div style="padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px;">${esc(t.name)} <span class="stat-sub">— owned by ${founderName(t.owner)}</span></div>`).join('')
+    : emptyState('Nothing waiting on you','')}
+    </div>`;
+}
+
+/* ================= TASKS ================= */
+let taskFilter = {status:'All', view:'All Tasks', q:''};
+function renderTasks(){
+  const tab = STATE.ui.taskTab;
+  return `
+  <div class="page-header">
+    <div><div class="page-eyebrow mono">Avora / Operations</div><div class="page-title">Tasks</div><div class="page-subtitle">See what needs doing, who owns it, and what's overdue.</div></div>
+    <div class="page-actions">${tab==='tasks'?`<button class="btn" onclick="openTaskModal()">+ Add task</button>`:''}</div>
+  </div>
+  <div class="tab-toggle" style="margin-bottom:18px;">
+    <div class="tt-item ${tab==='tasks'?'active':''}" onclick="setTaskTab('tasks')">TASKS</div>
+    <div class="tt-item ${tab==='responsibilities'?'active':''}" onclick="setTaskTab('responsibilities')">RESPONSIBILITIES</div>
+    <div class="tt-item ${tab==='workload'?'active':''}" onclick="setTaskTab('workload')">TEAM WORKLOAD</div>
+  </div>
+  ${tab==='tasks'?renderTaskList():tab==='responsibilities'?renderResponsibilityMatrix():renderTeamWorkload()}
+  `;
+}
+function setTaskTab(t){ STATE.ui.taskTab=t; render(); }
+function renderTaskList(){
+  const views = ['All Tasks','My Tasks','By Founder','Today','This Week','Upcoming','Overdue','Blocked','Completed'];
+  const today = todayISO();
+  const weekEnd = addDays(7);
+  let list = STATE.tasks.filter(t=>{
+    if(STATE.ui.activeFounderId!=='all' && t.owner!==STATE.ui.activeFounderId && !(t.support||[]).includes(STATE.ui.activeFounderId)) return false;
+    if(taskFilter.q && !t.name.toLowerCase().includes(taskFilter.q.toLowerCase())) return false;
+    switch(taskFilter.view){
+      case 'My Tasks': return STATE.ui.activeFounderId!=='all' ? true : true;
+      case 'Today': return t.due===today && t.status!=='Complete';
+      case 'This Week': return t.due && t.due>=today && t.due<=weekEnd && t.status!=='Complete';
+      case 'Upcoming': return t.due && t.due>today && t.status!=='Complete';
+      case 'Overdue': return t.due && t.due<today && t.status!=='Complete';
+      case 'Blocked': return t.status==='Blocked';
+      case 'Completed': return t.status==='Complete';
+      default: return true;
+    }
+  }).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));
+
+  if(!STATE.tasks.length){
+    return emptyState('No tasks yet','Break the launch down into ownable tasks — assigned, dated, and trackable.','+ Create task',"openTaskModal()");
+  }
+
+  return `
+  <div class="filter-row">
+    ${views.map(v=>`<div class="chip ${taskFilter.view===v?'active':''}" onclick="setTaskFilter('view','${v}')">${v}</div>`).join('')}
+    <input class="search-input" placeholder="Search tasks..." value="${esc(taskFilter.q)}" oninput="setTaskFilter('q',this.value)">
+    <div class="tab-toggle" style="margin-left:auto;">
+      <div class="tt-item ${STATE.ui.taskView==='list'?'active':''}" onclick="setTaskView('list')">LIST</div>
+      <div class="tt-item ${STATE.ui.taskView==='kanban'?'active':''}" onclick="setTaskView('kanban')">KANBAN</div>
+    </div>
+  </div>
+  ${STATE.ui.taskView==='list'? renderTaskTable(list) : renderTaskKanban(list)}
+  `;
+}
+function renderTaskTable(list){
+  if(!list.length) return emptyState('No tasks match this filter','','Clear filters',"taskFilter={status:'All',view:'All Tasks',q:''};render();");
+  return `<div class="table-wrap stack-mobile"><table>
+    <thead><tr><th>Task</th><th>Owner</th><th>Area</th><th>Priority</th><th>Status</th><th>Due</th><th></th></tr></thead>
+    <tbody>
+    ${list.map(t=>{ const prog=taskProgress(t); return `
+      <tr style="cursor:pointer;" onclick="openTaskModal('${t.id}')">
+        <td class="td-title"><strong>${esc(t.name)}</strong>${prog?`<div class="stat-sub">${prog.done}/${prog.total} subtasks complete</div>`:''}</td>
+        <td data-label="Owner" onclick="event.stopPropagation();"><span class="fchip"><span class="fdot">${initials2(founderName(t.owner))}</span></span></td>
+        <td data-label="Area">${esc(t.area)}</td>
+        <td data-label="Priority"><span class="badge ${t.priority==='Critical'?'danger':t.priority==='High'?'warn':'neutral'}">${t.priority}</span></td>
+        <td data-label="Status" onclick="event.stopPropagation();">
+          <select class="sel" style="padding:4px 6px;font-size:11.5px;" onchange="updateTask('${t.id}','status',this.value)">
+            ${['Backlog','Not Started','In Progress','Waiting','Blocked','Review','Complete'].map(s=>`<option ${t.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </td>
+        <td data-label="Due" class="mono" style="${t.due && t.due<todayISO() && t.status!=='Complete'?'color:var(--danger);':''}">${fmtDate(t.due)}</td>
+        <td onclick="event.stopPropagation();"><button class="btn ghost sm" onclick="archiveTask('${t.id}')">Archive</button></td>
+      </tr>`;}).join('')}
+    </tbody></table></div>`;
+}
+function renderTaskKanban(list){
+  const cols = ['Backlog','Not Started','In Progress','Waiting','Blocked','Review','Complete'];
+  return `<div class="kanban">${cols.map(col=>{
+    const items = list.filter(t=>t.status===col);
+    return `<div class="kanban-col"><h4>${col} <span>${items.length}</span></h4>
+      ${items.map(t=>`<div class="kanban-card" onclick="openTaskModal('${t.id}')"><div>${esc(t.name)}</div><div class="kc-owner"><span>${founderName(t.owner)}</span><span>${fmtDate(t.due)}</span></div></div>`).join('')}
+    </div>`;
+  }).join('')}</div>`;
+}
+function setTaskFilter(k,v){ taskFilter[k]=v; render(); }
+function setTaskView(v){ STATE.ui.taskView=v; render(); }
+function updateTask(id,field,value){ const t=STATE.tasks.find(x=>x.id===id); if(t){ t[field]=value; if(field==='status'&&value==='Complete') t.completed=todayISO(); persist(); render(); } }
+function archiveTask(id){ confirmDelete('task', ()=>{ STATE.tasks=STATE.tasks.filter(t=>t.id!==id); persist(); render(); showToast('Task deleted'); }); }
+
+function openTaskModal(id){
+  const t = id ? STATE.tasks.find(x=>x.id===id) : {id:'', name:'', description:'', owner:'', support:[], area:'', project:'', productId:'', supplierId:'', dropId:'', priority:'Medium', status:'Not Started', start:'', due:'', effort:'', dependencies:'', recurring:false, subtasks:[], notes:'', blocker:'', created:todayISO(), completed:''};
+  const isNew = !id;
+  openModal(`
+    <h3>${isNew?'Add task':'Edit task'}</h3>
+    <div class="field-row"><label class="flabel">What needs doing?</label><input class="field" id="tm-name" value="${esc(t.name)}" placeholder="e.g. Contact packaging suppliers"></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Who?</label><select class="sel" id="tm-owner">${ownerOptions(t.owner)}</select></div>
+      <div class="field-row"><label class="flabel">Due</label><input class="field" type="date" id="tm-due" value="${t.due||''}"></div>
+    </div>
+    <div class="field-row"><label class="flabel">Priority</label><select class="sel" id="tm-priority">${['Critical','High','Medium','Low'].map(p=>`<option ${t.priority===p?'selected':''}>${p}</option>`).join('')}</select></div>
+
+    <button type="button" class="btn ghost sm" id="tm-details-toggle" onclick="toggleTaskDetails()" style="margin:6px 0 4px;">+ Add details</button>
+    <div id="tm-details" style="display:none;">
+      <div class="form-section" style="margin-top:12px;">
+        <div class="form-section-title">More about it</div>
+        <div class="field-row"><label class="flabel">Description</label><textarea class="field" id="tm-desc" rows="2">${esc(t.description)}</textarea></div>
+        <div class="grid grid-2">
+          <div class="field-row"><label class="flabel">Status</label><select class="sel" id="tm-status">${['Backlog','Not Started','In Progress','Waiting','Blocked','Review','Complete'].map(s=>`<option ${t.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+          <div class="field-row"><label class="flabel">Area</label><input class="field" id="tm-area" value="${esc(t.area)}" placeholder="Product / Brand / Finance..."></div>
+        </div>
+        <div class="field-row"><label class="flabel">Also involves</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            ${STATE.settings.founders.map(f=>`<button type="button" class="btn ${((t.support||[]).includes(f.id))?'':'ghost'} xs" data-supp="${f.id}" onclick="toggleModalSupport(this,'${f.id}')">${initials2(f.name)}</button>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Planning</div>
+        <div class="grid grid-3">
+          <div class="field-row"><label class="flabel">Start date</label><input class="field" type="date" id="tm-start" value="${t.start||''}"></div>
+          <div class="field-row"><label class="flabel">Estimated effort</label><input class="field" id="tm-effort" value="${esc(t.effort)}" placeholder="e.g. 2 hrs"></div>
+          <div class="field-row"><label class="flabel">Repeats?</label><select class="sel" id="tm-recurring"><option value="false" ${!t.recurring?'selected':''}>No</option><option value="true" ${t.recurring?'selected':''}>Yes</option></select></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Connected to</div>
+        <div class="grid grid-3">
+          <div class="field-row"><label class="flabel">Product</label><select class="sel" id="tm-product">${productOptions(t.productId)}</select></div>
+          <div class="field-row"><label class="flabel">Supplier</label><select class="sel" id="tm-supplier">${supplierOptions(t.supplierId)}</select></div>
+          <div class="field-row"><label class="flabel">Drop</label><select class="sel" id="tm-drop">${dropOptions(t.dropId)}</select></div>
+        </div>
+        <div class="field-row"><label class="flabel">Waiting on</label><input class="field" id="tm-deps" value="${esc(t.dependencies)}" placeholder="e.g. Sample approval"></div>
+        <div class="field-row"><label class="flabel">What's blocking it?</label><input class="field" id="tm-blocker" value="${esc(t.blocker)}"></div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Checklist</div>
+        <div id="tm-subtasks">${renderSubtaskList(t.subtasks||[])}</div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <input class="field" id="tm-newsubtask" placeholder="Add a step...">
+          <button class="btn ghost sm" onclick="addModalSubtask()">Add</button>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Notes</div>
+        <textarea class="field" id="tm-notes" rows="2">${esc(t.notes)}</textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      ${!isNew?`<button class="btn danger" onclick="deleteTaskConfirm('${t.id}')">Delete</button>`:''}
+      <div class="spacer"></div>
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn" onclick="saveTaskModal('${t.id}')">${isNew?'Add task':'Save changes'}</button>
+    </div>
+  `, true);
+  window._modalSubtasks = JSON.parse(JSON.stringify(t.subtasks||[]));
+  window._modalSupport = JSON.parse(JSON.stringify(t.support||[]));
+  // auto-expand details for existing tasks that already have extra info worth seeing
+  if(!isNew && (t.description||t.notes||(t.subtasks&&t.subtasks.length)||t.productId||t.supplierId||t.dropId)) toggleTaskDetails();
+}
+function toggleTaskDetails(){
+  const box = document.getElementById('tm-details');
+  const btn = document.getElementById('tm-details-toggle');
+  const open = box.style.display==='none';
+  box.style.display = open?'block':'none';
+  btn.textContent = open? '– Hide details' : '+ Add details';
+}
+function toggleModalSupport(btn,fid){
+  const i = window._modalSupport.indexOf(fid);
+  if(i>=0){ window._modalSupport.splice(i,1); btn.classList.add('ghost'); } else { window._modalSupport.push(fid); btn.classList.remove('ghost'); }
+}
+function renderSubtaskList(subs){
+  if(!subs.length) return `<div class="stat-sub">No subtasks yet.</div>`;
+  return subs.map((s,i)=>`
+    <div class="checklist-item">
+      <input type="checkbox" ${s.done?'checked':''} onchange="toggleModalSubtaskDone(${i})">
+      <span class="cl-text ${s.done?'done':''}">${esc(s.text)}</span>
+      <div class="cl-actions">
+        <button class="btn ghost xs" ${i===0?'disabled':''} onclick="moveModalSubtask(${i},-1)">↑</button>
+        <button class="btn ghost xs" ${i===subs.length-1?'disabled':''} onclick="moveModalSubtask(${i},1)">↓</button>
+        <button class="btn ghost xs" onclick="removeModalSubtask(${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+function refreshModalSubtasks(){ document.getElementById('tm-subtasks').innerHTML = renderSubtaskList(window._modalSubtasks); }
+function addModalSubtask(){ const inp=document.getElementById('tm-newsubtask'); const v=inp.value.trim(); if(!v) return; window._modalSubtasks.push({id:uid('st'),text:v,done:false}); inp.value=''; refreshModalSubtasks(); }
+function toggleModalSubtaskDone(i){ window._modalSubtasks[i].done=!window._modalSubtasks[i].done; refreshModalSubtasks(); }
+function moveModalSubtask(i,dir){ const j=i+dir; if(j<0||j>=window._modalSubtasks.length) return; const a=window._modalSubtasks; [a[i],a[j]]=[a[j],a[i]]; refreshModalSubtasks(); }
+function removeModalSubtask(i){ window._modalSubtasks.splice(i,1); refreshModalSubtasks(); }
+function saveTaskModal(id){
+  const isNew = !id;
+  const data = {
+    name: document.getElementById('tm-name').value.trim(),
+    description: document.getElementById('tm-desc').value,
+    owner: document.getElementById('tm-owner').value,
+    support: window._modalSupport||[],
+    priority: document.getElementById('tm-priority').value,
+    status: document.getElementById('tm-status').value,
+    area: document.getElementById('tm-area').value||'General',
+    start: document.getElementById('tm-start').value,
+    due: document.getElementById('tm-due').value,
+    effort: document.getElementById('tm-effort').value,
+    recurring: document.getElementById('tm-recurring').value==='true',
+    productId: document.getElementById('tm-product').value,
+    supplierId: document.getElementById('tm-supplier').value,
+    dropId: document.getElementById('tm-drop').value,
+    dependencies: document.getElementById('tm-deps').value,
+    blocker: document.getElementById('tm-blocker').value,
+    subtasks: window._modalSubtasks||[],
+    notes: document.getElementById('tm-notes').value
+  };
+  if(!data.name){ showToast('Enter a task title'); return; }
+  if(isNew){ STATE.tasks.unshift(Object.assign({id:uid('t'), created:todayISO(), completed:''}, data)); }
+  else{ const t=STATE.tasks.find(x=>x.id===id); Object.assign(t,data); if(data.status==='Complete'&&!t.completed) t.completed=todayISO(); }
+  persist(); closeModal(); showToast('Task saved'); render();
+}
+function deleteTaskConfirm(id){ confirmDelete('task', ()=>{ STATE.tasks=STATE.tasks.filter(t=>t.id!==id); persist(); render(); }); }
+
+/* --- Responsibility matrix --- */
+function renderResponsibilityMatrix(){
+  const areas = STATE.responsibilities.areas;
+  return `
+  <div class="stat-sub" style="margin-bottom:14px;">Lightweight RACI-style view — who leads, who supports, and where responsibility is shared.</div>
+  <div class="table-wrap stack-mobile"><table>
+    <thead><tr><th>Area</th>${STATE.settings.founders.map(f=>`<th>${esc(f.name)}</th>`).join('')}<th></th></tr></thead>
+    <tbody>
+      ${areas.map((area,ai)=>`
+        <tr>
+          <td class="td-title"><strong>${esc(area)}</strong></td>
+          ${STATE.settings.founders.map(f=>{
+            const key = area+'::'+f.id; const val = STATE.responsibilities.assignments[key]||'';
+            return `<td data-label="${esc(f.name)}"><select class="sel" style="padding:4px 6px;font-size:11.5px;" onchange="setResponsibility('${area.replace(/'/g,"\\'")}','${f.id}',this.value)">
+              ${['','Lead','Support','Shared'].map(v=>`<option value="${v}" ${val===v?'selected':''}>${v||'—'}</option>`).join('')}
+            </select></td>`;
+          }).join('')}
+          <td><button class="btn ghost xs" onclick="removeArea(${ai})">Remove</button></td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table></div>
+  <div style="margin-top:10px;display:flex;gap:8px;">
+    <input class="field" id="new-area-input" placeholder="Add business area..." style="max-width:260px;">
+    <button class="btn ghost sm" onclick="addArea()">Add area</button>
+  </div>
+  `;
+}
+function setResponsibility(area,fid,val){ STATE.responsibilities.assignments[area+'::'+fid]=val; persist(); }
+function addArea(){ const inp=document.getElementById('new-area-input'); const v=inp.value.trim(); if(!v) return; STATE.responsibilities.areas.push(v); persist(); render(); }
+function removeArea(i){ STATE.responsibilities.areas.splice(i,1); persist(); render(); }
+
+/* --- Team workload --- */
+function renderTeamWorkload(){
+  return `<div class="stat-sub" style="margin-bottom:14px;">Visibility into workload distribution — not a performance ranking.</div>
+  <div class="grid grid-3">
+    ${STATE.settings.founders.map(f=>{
+      const mine = STATE.tasks.filter(t=>t.owner===f.id);
+      const open = mine.filter(t=>t.status!=='Complete');
+      const critical = open.filter(t=>t.priority==='Critical').length;
+      const overdue = open.filter(t=>t.due && t.due<todayISO()).length;
+      const inProgress = open.filter(t=>t.status==='In Progress').length;
+      const waiting = open.filter(t=>t.status==='Waiting').length;
+      const upcoming = open.filter(t=>t.due && t.due>=todayISO() && t.due<=addDays(7)).length;
+      return `<div class="card">
+        <div style="display:flex;align-items:center;gap:10px;"><div class="fdot" style="width:28px;height:28px;font-size:11px;">${initials2(f.name)}</div><div><div style="font-weight:700;font-size:14px;">${esc(f.name)}</div><div class="stat-sub">${esc(f.role)}</div></div></div>
+        <div class="divider"></div>
+        <div style="font-size:12.5px;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;"><span>Open tasks</span><strong>${open.length}</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Critical</span><strong>${critical}</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>In progress</span><strong>${inProgress}</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Waiting</span><strong>${waiting}</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Overdue</span><strong style="color:${overdue?'var(--danger)':'inherit'}">${overdue}</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Due within 7 days</span><strong>${upcoming}</strong></div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+/* ================= LAUNCH PLAN ================= */
+function renderLaunch(){
+  const readiness = computeReadiness();
+  return `
+  <div class="page-header">
+    <div><div class="page-eyebrow mono">Avora / Roadmap</div><div class="page-title">Master Launch Plan</div><div class="page-subtitle">Every milestone between now and launch day.</div></div>
+    <div class="page-actions"><span class="badge navy" style="font-size:12px;padding:7px 14px;">${readiness.overall}% READY</span></div>
+  </div>
+  ${STATE.launchPhases.map((p,i)=>{
+    const pct = p.milestones.length? Math.round((p.milestones.reduce((s,m)=>s+(m.status==='Complete'?1:m.status==='In Progress'?0.5:m.status==='Review'?0.75:0),0)/p.milestones.length)*100):0;
+    const done = p.milestones.filter(m=>m.status==='Complete').length;
+    return `<div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div><span class="mono" style="color:var(--steel);font-size:11px;">PHASE ${String(i+1).padStart(2,'0')}</span><div style="font-size:16px;font-weight:700;">${esc(p.name)}</div></div>
+        <div style="text-align:right;min-width:160px;"><div class="mono" style="font-size:12px;">${done}/${p.milestones.length} complete</div><div class="bar-track" style="width:160px;"><div class="bar-fill ${pct>=75?'':pct>=40?'warn':'danger'}" style="width:${pct}%"></div></div></div>
+      </div>
+      <div class="divider"></div>
+      ${p.milestones.map(m=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;flex-wrap:wrap;">
+          <input class="field" style="flex:1;min-width:180px;border:none;padding:2px;background:transparent;" value="${esc(m.name)}" onchange="updateMilestone('${p.id}','${m.id}','name',this.value)">
+          <select class="sel" style="width:auto;padding:4px 6px;font-size:11px;" onchange="updateMilestone('${p.id}','${m.id}','priority',this.value)">
+            ${['Critical','High','Medium','Low'].map(pr=>`<option ${m.priority===pr?'selected':''}>${pr}</option>`).join('')}
+          </select>
+          <select class="sel" style="width:auto;padding:4px 6px;font-size:11px;" onchange="updateMilestone('${p.id}','${m.id}','owner',this.value)">${ownerOptions(m.owner)}</select>
+          <input class="field" type="date" style="width:auto;padding:4px 6px;font-size:11px;" value="${m.deadline||''}" onchange="updateMilestone('${p.id}','${m.id}','deadline',this.value)">
+          <select class="sel" style="width:auto;padding:4px 6px;font-size:11px;" onchange="updateMilestone('${p.id}','${m.id}','status',this.value)">
+            ${['Not Started','In Progress','Review','Complete'].map(s=>`<option ${m.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+          <button class="btn ghost xs" onclick="removeMilestone('${p.id}','${m.id}')">✕</button>
+        </div>
+      `).join('')}
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <input class="field" id="new-ms-${p.id}" placeholder="Add milestone...">
+        <button class="btn ghost sm" onclick="addMilestone('${p.id}')">Add</button>
+      </div>
+    </div>`;
+  }).join('')}
+  `;
+}
+function updateMilestone(phaseId,msId,field,value){ const p=STATE.launchPhases.find(x=>x.id===phaseId); const m=p.milestones.find(x=>x.id===msId); m[field]=value; persist(); render(); }
+function removeMilestone(phaseId,msId){ const p=STATE.launchPhases.find(x=>x.id===phaseId); p.milestones=p.milestones.filter(m=>m.id!==msId); persist(); render(); }
+function addMilestone(phaseId){ const inp=document.getElementById('new-ms-'+phaseId); const v=inp.value.trim(); if(!v) return; const p=STATE.launchPhases.find(x=>x.id===phaseId); p.milestones.push({id:uid('m'), name:v, owner:'', deadline:'', status:'Not Started', priority:'Medium', notes:''}); persist(); render(); }
+
+/* ================= PRODUCTS ================= */
+function renderProducts(){
+  const list = STATE.products.filter(p=>!p.archived);
+  return `
+  <div class="page-header">
+    <div><div class="page-eyebrow mono">Avora / Collection 001</div><div class="page-title">Product Development</div><div class="page-subtitle">Track cost, margin and status for every AVORA product.</div></div>
+    <div class="page-actions"><button class="btn" onclick="openProductModal()">+ Add product</button></div>
+  </div>
+  ${list.length? `<div class="grid grid-4">${list.map(p=>{
+    const m = productMargin(p);
+    return `<div class="card" style="cursor:pointer;" onclick="openProductDetail('${p.id}')">
+      <div class="mono" style="font-size:10.5px;color:var(--steel);letter-spacing:0.06em;">${p.sku}</div>
+      <div style="font-size:15px;font-weight:700;margin:4px 0 2px;">${esc(p.name)}</div>
+      <div class="stat-sub">${esc(p.category)||'Category not set'} · ${esc(p.collection)}</div>
+      <div style="margin-top:10px;"><span class="badge neutral">${esc(p.status)}</span></div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;">
+        <span>RRP <strong>${p.rrp?fmtMoney0(p.rrp,p.currency):'—'}</strong></span>
+        <span>Margin <strong style="color:${m.marginPct>=STATE.settings.marginTarget?'var(--ok)':'var(--warn)'}">${p.actualCost||p.targetCost?m.marginPct.toFixed(0)+'%':'—'}</strong></span>
+      </div>
+      <div class="stat-sub" style="margin-top:6px;">Stock: ${productStockTotal(p.id)} units</div>
+    </div>`;
+  }).join('')}</div>` : emptyState('No products yet','Add AVORA products to track development, cost and margin.','+ Add product',"openProductModal()")}
+  `;
+}
+function openProductDetail(id){
+  const p = STATE.products.find(x=>x.id===id);
+  const m = productMargin(p); const lc = productLandedCost(p);
+  openModal(`
+    <h3>${esc(p.sku)} — ${esc(p.name)}</h3>
+    <div class="modal-sub">${esc(p.category)||'Category not set'} · ${esc(p.collection)}</div>
+    <div class="grid grid-2" style="margin-bottom:10px;">
+      <div class="field-row"><label class="flabel">Development status</label>
+        <select class="sel" onchange="updateProduct('${p.id}','status',this.value)">
+          ${['Idea','Design','Tech Pack','Supplier Quote','Sample Review','Fit Approval','Pre-Production','Production','Quality Control','In Transit','Warehouse','Ready to Sell'].map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field-row"><label class="flabel">Supplier</label><select class="sel" onchange="updateProduct('${p.id}','supplierId',this.value)">${supplierOptions(p.supplierId)}</select></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Category</label><input class="field" value="${esc(p.category)}" onchange="updateProduct('${p.id}','category',this.value)"></div>
+      <div class="field-row"><label class="flabel">Currency</label><select class="sel" onchange="updateProduct('${p.id}','currency',this.value)">${['GBP','EUR','USD'].map(c=>`<option ${p.currency===c?'selected':''}>${c}</option>`).join('')}</select></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field-row"><label class="flabel">Target cost</label><input class="field" type="number" value="${p.targetCost||''}" onchange="updateProduct('${p.id}','targetCost',parseFloat(this.value)||0)"></div>
+      <div class="field-row"><label class="flabel">Actual cost</label><input class="field" type="number" value="${p.actualCost||''}" onchange="updateProduct('${p.id}','actualCost',parseFloat(this.value)||0)"></div>
+      <div class="field-row"><label class="flabel">RRP</label><input class="field" type="number" value="${p.rrp||''}" onchange="updateProduct('${p.id}','rrp',parseFloat(this.value)||0)"></div>
+    </div>
+    <div class="card tight" style="background:#F7F5EF;">
+      <div class="stat-label">Unit economics</div>
+      ${(p.actualCost||p.targetCost)? `
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12.5px;"><span>Base cost</span><span class="mono">${fmtMoney(lc.base,p.currency)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span>Freight allocation</span><span class="mono">${fmtMoney(lc.freight,p.currency)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span>Duty allocation</span><span class="mono">${fmtMoney(lc.duty,p.currency)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span>Packaging</span><span class="mono">${fmtMoney(lc.packaging,p.currency)}</span></div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;"><span>Landed cost</span><span class="mono">${fmtMoney(m.landed,p.currency)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;"><span>Gross profit / unit</span><span class="mono">${fmtMoney(m.profit,p.currency)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;"><span>Gross margin</span><span class="mono" style="color:${m.marginPct>=STATE.settings.marginTarget?'var(--ok)':'var(--warn)'}">${m.marginPct.toFixed(1)}%</span></div>
+      ` : `<div class="stat-sub" style="margin-top:8px;">Enter a target or actual cost to calculate landed cost and margin.</div>`}
+    </div>
+    <div class="grid grid-2" style="margin-top:12px;">
+      <div class="field-row"><label class="flabel">Sample status</label><input class="field" value="${esc(p.sampleStatus)}" onchange="updateProduct('${p.id}','sampleStatus',this.value)"></div>
+      <div class="field-row"><label class="flabel">Fit status</label><input class="field" value="${esc(p.fitStatus)}" onchange="updateProduct('${p.id}','fitStatus',this.value)"></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Fabric</label><input class="field" value="${esc(p.fabric)}" onchange="updateProduct('${p.id}','fabric',this.value)"></div>
+      <div class="field-row"><label class="flabel">GSM</label><input class="field" type="number" value="${p.gsm||''}" onchange="updateProduct('${p.id}','gsm',parseFloat(this.value)||0)"></div>
+    </div>
+    <div class="field-row"><label class="flabel">Composition</label><input class="field" value="${esc(p.composition)}" onchange="updateProduct('${p.id}','composition',this.value)"></div>
+    <div class="stat-sub">Colourways: ${p.colourways.join(', ')||'—'} · Sizes: ${p.sizes.join(', ')||'—'} · Stock: ${productStockTotal(p.id)} units</div>
+    <div class="modal-foot"><button class="btn danger" onclick="archiveProduct('${p.id}')">Archive product</button><div class="spacer"></div><button class="btn ghost" onclick="closeModal()">Close</button></div>
+  `);
+}
+function updateProduct(id,field,value){ const p=STATE.products.find(x=>x.id===id); if(p){p[field]=value; persist(); if(currentView==='products') render();} }
+function archiveProduct(id){ confirmDelete('product (archive)', ()=>{ const p=STATE.products.find(x=>x.id===id); p.archived=true; persist(); render(); }); }
+function openProductModal(){
+  openModal(`<h3>Add product</h3>
+    <div class="field-row"><label class="flabel">SKU</label><input class="field" id="np-sku" placeholder="e.g. AAC-002"></div>
+    <div class="field-row"><label class="flabel">Name</label><input class="field" id="np-name" placeholder="Product name"></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Category</label><input class="field" id="np-cat" placeholder="Performance / Lifestyle / Accessories"></div>
+      <div class="field-row"><label class="flabel">RRP</label><input class="field" type="number" id="np-rrp" placeholder="0.00"></div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitNewProduct()">Add product</button></div>`);
+}
+function submitNewProduct(){
+  const sku=document.getElementById('np-sku').value.trim(); const name=document.getElementById('np-name').value.trim();
+  if(!sku||!name){showToast('Enter SKU and name'); return;}
+  const p = {id:uid('p'), sku, name, category:document.getElementById('np-cat').value, collection:'Collection 001', status:'Idea', supplierId:'', colourways:['Navy'], sizes:['S','M','L'], fabric:'', composition:'', gsm:0, targetCost:0, actualCost:0, rrp:Number(document.getElementById('np-rrp').value)||0, currency:STATE.settings.currency, moq:0, orderQty:0, sampleStatus:'', fitStatus:'', photography:'', website:'', launch:'', archived:false};
+  STATE.products.push(p);
+  p.colourways.forEach(c=>p.sizes.forEach(s=>STATE.inventory.push({id:uid('inv'), productId:p.id, colour:c, size:s, opening:0, incoming:0, reserved:0, sold:0, returned:0, damaged:0, samples:0, marketingStock:0})));
+  persist(); closeModal(); showToast('Product added'); render();
+}
+
+/* ================= INVENTORY ================= */
+function renderInventory(){
+  const active = STATE.products.filter(p=>!p.archived);
+  if(!active.length) return emptyState('No inventory yet','Add products first — inventory rows are created automatically per colour and size.','Go to Products',"go('products')");
+  const low = STATE.settings.lowStockThreshold;
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Stock</div><div class="page-title">Inventory</div><div class="page-subtitle">Stock on hand, incoming, and what's running low.</div></div></div>
+  ${active.map(p=>{
+    const rows = STATE.inventory.filter(r=>r.productId===p.id);
+    const total = rows.reduce((s,r)=>s+inventoryAvailable(r),0);
+    return `<div class="section-title">${esc(p.sku)} — ${esc(p.name)} <span class="count">${total} units available</span></div>
+    <div class="table-wrap stack-mobile" style="margin-bottom:20px;"><table>
+      <thead><tr><th>Colour / Size</th><th>Opening</th><th>Incoming</th><th>Reserved</th><th>Sold</th><th>Damaged</th><th>Samples</th><th>Available</th><th>Status</th></tr></thead>
+      <tbody>${rows.map(r=>{
+        const avail = inventoryAvailable(r);
+        const status = avail<=0? `<span class="badge danger">Out of stock</span>` : avail<=low? `<span class="badge warn">Low stock</span>` : `<span class="badge ok">In stock</span>`;
+        return `<tr><td class="td-title"><strong>${esc(r.colour)} — ${esc(r.size)}</strong></td>
+          <td data-label="Opening"><input class="field" style="width:64px;padding:4px 6px;" type="number" value="${r.opening}" onchange="updateInv('${r.id}','opening',parseInt(this.value)||0)"></td>
+          <td data-label="Incoming"><input class="field" style="width:64px;padding:4px 6px;" type="number" value="${r.incoming}" onchange="updateInv('${r.id}','incoming',parseInt(this.value)||0)"></td>
+          <td data-label="Reserved"><input class="field" style="width:64px;padding:4px 6px;" type="number" value="${r.reserved}" onchange="updateInv('${r.id}','reserved',parseInt(this.value)||0)"></td>
+          <td data-label="Sold"><input class="field" style="width:64px;padding:4px 6px;" type="number" value="${r.sold}" onchange="updateInv('${r.id}','sold',parseInt(this.value)||0)"></td>
+          <td data-label="Damaged"><input class="field" style="width:64px;padding:4px 6px;" type="number" value="${r.damaged}" onchange="updateInv('${r.id}','damaged',parseInt(this.value)||0)"></td>
+          <td data-label="Samples"><input class="field" style="width:64px;padding:4px 6px;" type="number" value="${r.samples}" onchange="updateInv('${r.id}','samples',parseInt(this.value)||0)"></td>
+          <td data-label="Available" class="mono" style="font-weight:700;">${avail}</td><td data-label="Status">${status}</td></tr>`;
+      }).join('')}</tbody></table></div>`;
+  }).join('')}`;
+}
+function updateInv(id,field,value){ const r=STATE.inventory.find(x=>x.id===id); if(r){r[field]=value; persist(); render();} }
+
+/* ================= FINANCE ================= */
+function renderFinance(){
+  const b = budgetTotals(); const bal = founderBalances();
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Finance</div><div class="page-title">Finance Command Centre</div><div class="page-subtitle">Budget, spend and margin in one place.</div></div>
+    <div class="page-actions"><button class="btn" onclick="quickAddForm('expense')">+ Add expense</button></div></div>
+  <div class="grid grid-4">
+    <div class="card"><div class="stat-label">Total budget</div><div class="stat-value">${fmtMoney0(b.totalBudget)}</div></div>
+    <div class="card"><div class="stat-label">Actual spend</div><div class="stat-value">${fmtMoney0(b.totalActual)}</div></div>
+    <div class="card"><div class="stat-label">Committed</div><div class="stat-value">${fmtMoney0(b.totalCommitted)}</div></div>
+    <div class="card"><div class="stat-label">Remaining</div><div class="stat-value" style="color:${b.remaining<0?'var(--danger)':'inherit'}">${fmtMoney0(b.remaining)}</div><div class="bar-track"><div class="bar-fill ${b.pctUsed>90?'danger':b.pctUsed>70?'warn':''}" style="width:${Math.min(b.pctUsed,100)}%"></div></div></div>
+  </div>
+  <div class="section-title">Startup budget <span class="count">${STATE.budget.length} line items</span></div>
+  ${STATE.budget.length? `<div class="table-wrap stack-mobile"><table>
+    <thead><tr><th>Description</th><th>Category</th><th>Budget</th><th>Actual</th><th>Paid by</th><th>Status</th><th></th></tr></thead>
+    <tbody>${STATE.budget.map(x=>`<tr>
+      <td class="td-title"><input class="field" style="border:none;padding:2px;background:transparent;font-weight:600;" value="${esc(x.description)}" onchange="updateBudget('${x.id}','description',this.value)"></td>
+      <td data-label="Category"><input class="field" style="border:none;padding:2px;background:transparent;width:120px;" value="${esc(x.category)}" onchange="updateBudget('${x.id}','category',this.value)"></td>
+      <td data-label="Budget"><input class="field" type="number" style="width:90px;padding:4px 6px;" value="${x.budget}" onchange="updateBudget('${x.id}','budget',parseFloat(this.value)||0)"></td>
+      <td data-label="Actual"><input class="field" type="number" style="width:90px;padding:4px 6px;" value="${x.actual}" onchange="updateBudget('${x.id}','actual',parseFloat(this.value)||0)"></td>
+      <td data-label="Paid by"><select class="sel" style="width:auto;padding:4px 6px;font-size:11.5px;" onchange="updateBudget('${x.id}','founder',this.value)">${ownerOptions(x.founder)}</select></td>
+      <td data-label="Status"><button class="badge ${x.paid?'ok':'warn'}" onclick="toggleBudgetPaid('${x.id}')">${x.paid?'Paid':'Committed'}</button></td>
+      <td><button class="btn ghost sm" onclick="deleteBudget('${x.id}')">Delete</button></td>
+    </tr>`).join('')}</tbody></table></div>` : emptyState('No expenses recorded','Track spend against your startup budget as you commit it.','+ Add expense',"quickAddForm('expense')")}
+
+  <div class="section-title">Founder contributions</div>
+  <div class="grid grid-3">
+    ${STATE.settings.founders.map(f=>`<div class="card">
+      <div style="font-size:13px;font-weight:700;">${esc(f.name)}</div>
+      <div class="stat-sub">Equity / capital contributed</div><div class="stat-value" style="font-size:20px;">${fmtMoney0(bal[f.id]?.contributed||0)}</div>
+      <div class="divider"></div>
+      <div class="stat-sub">Personally paid for business</div><div class="stat-value" style="font-size:20px;">${fmtMoney0(bal[f.id]?.personallyPaid||0)}</div>
+    </div>`).join('')}
+  </div>
+  <div style="display:flex;gap:8px;margin-top:10px;">
+    <button class="btn ghost sm" onclick="openContributionModal()">+ Add contribution / personal expense</button>
+  </div>
+  ${STATE.founderContributions.length? `<div class="table-wrap stack-mobile" style="margin-top:12px;"><table>
+    <thead><tr><th>Founder</th><th>Date</th><th>Type</th><th>Amount</th><th></th></tr></thead>
+    <tbody>${STATE.founderContributions.map(c=>`<tr><td class="td-title"><strong>${founderName(c.founder)}</strong></td><td data-label="Date">${fmtDate(c.date)}</td><td data-label="Type">${esc(c.type)}</td><td data-label="Amount" class="mono">${fmtMoney(c.amount)}</td><td><button class="btn ghost sm" onclick="deleteContribution('${c.id}')">Delete</button></td></tr>`).join('')}</tbody>
+  </table></div>` : ''}
+
+  ${STATE.products.filter(p=>!p.archived).length? `
+  <div class="section-title">Unit economics — all products</div>
+  <div class="table-wrap stack-mobile"><table>
+    <thead><tr><th>SKU</th><th>Landed cost</th><th>RRP</th><th>Gross profit</th><th>Margin</th></tr></thead>
+    <tbody>${STATE.products.filter(p=>!p.archived).map(p=>{ const m=productMargin(p); return `<tr><td class="td-title"><strong>${esc(p.sku)}</strong></td><td data-label="Landed cost" class="mono">${(p.actualCost||p.targetCost)?fmtMoney(m.landed,p.currency):'—'}</td><td data-label="RRP" class="mono">${p.rrp?fmtMoney(p.rrp,p.currency):'—'}</td><td data-label="Gross profit" class="mono">${(p.actualCost||p.targetCost)?fmtMoney(m.profit,p.currency):'—'}</td><td data-label="Margin">${(p.actualCost||p.targetCost)?`<span class="badge ${m.marginPct>=STATE.settings.marginTarget?'ok':'warn'}">${m.marginPct.toFixed(1)}%</span>`:'—'}</td></tr>`;}).join('')}</tbody>
+  </table></div>` : ''}
+  `;
+}
+function updateBudget(id,field,value){ const b=STATE.budget.find(x=>x.id===id); b[field]=value; persist(); if(field!=='description'&&field!=='category') render(); }
+function toggleBudgetPaid(id){ const b=STATE.budget.find(x=>x.id===id); b.paid=!b.paid; persist(); render(); }
+function deleteBudget(id){ STATE.budget=STATE.budget.filter(x=>x.id!==id); persist(); render(); }
+function openContributionModal(){
+  openModal(`<h3>Add contribution or personal expense</h3>
+    <div class="field-row"><label class="flabel">Founder</label><select class="sel" id="fc-founder">${ownerOptions('',false)}</select></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Type</label><select class="sel" id="fc-type"><option>Equity Investment</option><option>Loan to Business</option><option>Expense Paid Personally</option></select></div>
+      <div class="field-row"><label class="flabel">Amount</label><input class="field" type="number" id="fc-amount"></div>
+    </div>
+    <div class="field-row"><label class="flabel">Date</label><input class="field" type="date" id="fc-date" value="${todayISO()}"></div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitContribution()">Save</button></div>`);
+}
+function submitContribution(){
+  STATE.founderContributions.unshift({id:uid('fc'), founder:document.getElementById('fc-founder').value, date:document.getElementById('fc-date').value, type:document.getElementById('fc-type').value, amount:Number(document.getElementById('fc-amount').value)||0});
+  persist(); closeModal(); render();
+}
+function deleteContribution(id){ STATE.founderContributions=STATE.founderContributions.filter(c=>c.id!==id); persist(); render(); }
+
+/* ================= SUPPLIERS ================= */
+function renderSuppliers(){
+  const list = STATE.suppliers.filter(s=>!s.archived);
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Sourcing</div><div class="page-title">Supplier CRM</div><div class="page-subtitle">Your manufacturers, fabric and packaging partners.</div></div>
+    <div class="page-actions"><button class="btn" onclick="quickAddForm('supplier')">+ Add supplier</button></div></div>
+  ${list.length? `<div class="grid grid-3">${list.map(s=>`
+    <div class="card" style="cursor:pointer;" onclick="openSupplierModal('${s.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div><div style="font-size:14px;font-weight:700;">${esc(s.name)}</div><div class="stat-sub">${esc(s.category)} · ${esc(s.location)||'Location not set'}</div></div>
+        <span class="badge ${s.status==='Preferred'?'ok':s.status==='Rejected'?'danger':'neutral'}">${esc(s.status)}</span>
+      </div>
+      <div class="divider"></div>
+      <div style="font-size:12.5px;display:flex;flex-direction:column;gap:4px;">
+        <div style="display:flex;justify-content:space-between;"><span>MOQ</span><span class="mono">${s.moq||'—'}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>Lead time</span><span class="mono">${s.leadTime?s.leadTime+' days':'—'}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>Unit cost</span><span class="mono">${s.unitCost?fmtMoney(s.unitCost):'—'}</span></div>
+      </div>
+    </div>`).join('')}</div>` : emptyState('No suppliers added yet','Build your sourcing shortlist across garment, fabric, packaging and print.','+ Add supplier',"quickAddForm('supplier')")}
+  `;
+}
+function openSupplierModal(id){
+  const s = STATE.suppliers.find(x=>x.id===id);
+  openModal(`<h3>${esc(s.name)}</h3><div class="modal-sub">${esc(s.category)}</div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Company</label><input class="field" value="${esc(s.name)}" onchange="updateSupplier('${s.id}','name',this.value)"></div>
+      <div class="field-row"><label class="flabel">Category</label><select class="sel" onchange="updateSupplier('${s.id}','category',this.value)">${['Garment Manufacturer','Fabric','Packaging','Labels','Printing','Embroidery','Logistics','Photography','Creative','Other'].map(c=>`<option ${s.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Contact</label><input class="field" value="${esc(s.contact)}" onchange="updateSupplier('${s.id}','contact',this.value)"></div>
+      <div class="field-row"><label class="flabel">Email</label><input class="field" value="${esc(s.email)}" onchange="updateSupplier('${s.id}','email',this.value)"></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Location</label><input class="field" value="${esc(s.location)}" onchange="updateSupplier('${s.id}','location',this.value)"></div>
+      <div class="field-row"><label class="flabel">Status</label><select class="sel" onchange="updateSupplier('${s.id}','status',this.value)">${['Preferred','Backup','Testing','Rejected'].map(v=>`<option ${s.status===v?'selected':''}>${v}</option>`).join('')}</select></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field-row"><label class="flabel">MOQ</label><input class="field" type="number" value="${s.moq||''}" onchange="updateSupplier('${s.id}','moq',parseInt(this.value)||0)"></div>
+      <div class="field-row"><label class="flabel">Lead time (days)</label><input class="field" type="number" value="${s.leadTime||''}" onchange="updateSupplier('${s.id}','leadTime',parseInt(this.value)||0)"></div>
+      <div class="field-row"><label class="flabel">Unit cost</label><input class="field" type="number" value="${s.unitCost||''}" onchange="updateSupplier('${s.id}','unitCost',parseFloat(this.value)||0)"></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Quality (0–5)</label><input class="field" type="number" min="0" max="5" value="${s.quality||0}" onchange="updateSupplier('${s.id}','quality',parseInt(this.value)||0)"></div>
+      <div class="field-row"><label class="flabel">Reliability (0–5)</label><input class="field" type="number" min="0" max="5" value="${s.reliability||0}" onchange="updateSupplier('${s.id}','reliability',parseInt(this.value)||0)"></div>
+    </div>
+    <div class="field-row"><label class="flabel">Payment terms</label><input class="field" value="${esc(s.paymentTerms)}" onchange="updateSupplier('${s.id}','paymentTerms',this.value)"></div>
+    <div class="field-row"><label class="flabel">Notes</label><textarea class="field" rows="2" onchange="updateSupplier('${s.id}','notes',this.value)">${esc(s.notes)}</textarea></div>
+    <div class="modal-foot"><button class="btn danger" onclick="archiveSupplier('${s.id}')">Archive</button><div class="spacer"></div><button class="btn ghost" onclick="closeModal()">Close</button></div>`);
+}
+function updateSupplier(id,field,value){ const s=STATE.suppliers.find(x=>x.id===id); s[field]=value; persist(); }
+function archiveSupplier(id){ confirmDelete('supplier (archive)', ()=>{ const s=STATE.suppliers.find(x=>x.id===id); s.archived=true; persist(); render(); }); }
+
+/* ================= PRODUCT DROPS ================= */
+function renderDrops(){
+  const active = STATE.drops.filter(d=>!d.archived);
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Releases</div><div class="page-title">Product Drops</div><div class="page-subtitle">Plan and manage AVORA releases.</div></div>
+    <div class="page-actions">
+      <div class="tab-toggle"><div class="tt-item ${STATE.ui.dropsView==='card'?'active':''}" onclick="setDropsView('card')">CARD</div><div class="tt-item ${STATE.ui.dropsView==='timeline'?'active':''}" onclick="setDropsView('timeline')">TIMELINE</div></div>
+      <button class="btn" onclick="quickAddForm('drop')">+ Create drop</button>
+    </div></div>
+  ${!active.length? emptyState('No product drops planned','Plan future AVORA releases and connect products, budgets, deadlines and campaigns.','+ Create product drop',"quickAddForm('drop')")
+    : STATE.ui.dropsView==='card' ? renderDropCards(active) : renderDropTimeline(active)}
+  `;
+}
+function setDropsView(v){ STATE.ui.dropsView=v; render(); }
+function renderDropCards(active){
+  return `<div class="grid grid-3">${active.map(d=>`
+    <div class="card" style="cursor:pointer;" onclick="openDropModal('${d.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div><span class="mono" style="color:var(--steel);font-size:10.5px;">DROP ${String(d.number).padStart(2,'0')}</span><div style="font-size:15px;font-weight:700;">${esc(d.name)}</div></div>
+        <span class="badge ${d.status==='Live'?'ok':d.status==='Paused'?'danger':'neutral'}">${esc(d.status)}</span>
+      </div>
+      <div class="stat-sub" style="margin-top:6px;">${esc(d.description)||'No description yet.'}</div>
+      <div class="divider"></div>
+      <div class="stat-sub">Launch: ${fmtDate(d.launchDate)} · Budget: ${d.budget?fmtMoney0(d.budget):'—'}</div>
+      <div class="stat-sub">Products: ${d.productIds.length}</div>
+    </div>`).join('')}</div>`;
+}
+function renderDropTimeline(active){
+  const deadlineFields = [['designDeadline','Design'],['samplingDeadline','Sampling'],['productionDeadline','Production'],['photographyDeadline','Photography'],['contentDeadline','Content'],['campaignStart','Campaign start'],['launchDate','Launch']];
+  return active.map(d=>`
+    <div class="card" style="margin-bottom:12px;cursor:pointer;" onclick="openDropModal('${d.id}')">
+      <div style="display:flex;justify-content:space-between;"><strong>${esc(d.name)}</strong><span class="badge neutral">${esc(d.status)}</span></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;">
+        ${deadlineFields.map(([f,label])=> d[f] ? `<div><div class="stat-sub">${label}</div><div class="mono" style="font-size:12px;">${fmtDate(d[f])}</div></div>` : '').join('') || `<div class="stat-sub">No deadlines set yet.</div>`}
+      </div>
+    </div>`).join('');
+}
+
+let _dropModalTab = 'overview';
+function openDropModal(id){
+  _dropModalTab='overview';
+  renderDropModalBody(id);
+}
+function renderDropModalBody(id){
+  const d = STATE.drops.find(x=>x.id===id);
+  const tabs = ['overview','products','timeline','tasks','content','budget','notes'];
+  openModal(`
+    <h3>${esc(d.name)}</h3>
+    <div class="modal-sub">Drop ${String(d.number).padStart(2,'0')} · <span class="badge neutral">${esc(d.status)}</span></div>
+    <div class="modal-tabs">${tabs.map(t=>`<div class="modal-tab ${_dropModalTab===t?'active':''}" onclick="_dropModalTab='${t}';renderDropModalBody('${id}')">${t.toUpperCase()}</div>`).join('')}</div>
+    <div id="drop-tab-body">${renderDropTabBody(d)}</div>
+    <div class="modal-foot">
+      <button class="btn danger" onclick="archiveDrop('${d.id}')">Archive drop</button>
+      <button class="btn ghost" onclick="duplicateDrop('${d.id}')">Duplicate</button>
+      <div class="spacer"></div>
+      <button class="btn ghost" onclick="closeModal();render();">Close</button>
+    </div>
+  `, true);
+}
+function renderDropTabBody(d){
+  if(_dropModalTab==='overview'){
+    return `
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Drop name</label><input class="field" value="${esc(d.name)}" onchange="updateDrop('${d.id}','name',this.value)"></div>
+        <div class="field-row"><label class="flabel">Status</label><select class="sel" onchange="updateDrop('${d.id}','status',this.value)">${['Idea','Planning','Design','Sampling','Production','Campaign Prep','Ready','Live','Complete','Paused'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      </div>
+      <div class="field-row"><label class="flabel">Description</label><textarea class="field" rows="2" onchange="updateDrop('${d.id}','description',this.value)">${esc(d.description)}</textarea></div>
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Owner</label><select class="sel" onchange="updateDrop('${d.id}','owner',this.value)">${ownerOptions(d.owner)}</select></div>
+        <div class="field-row"><label class="flabel">Secondary owner</label><select class="sel" onchange="updateDrop('${d.id}','secondaryOwner',this.value)">${ownerOptions(d.secondaryOwner)}</select></div>
+      </div>
+      <div class="field-row"><label class="flabel">Budget</label><input class="field" type="number" value="${d.budget||''}" onchange="updateDrop('${d.id}','budget',parseFloat(this.value)||0)"></div>
+    `;
+  }
+  if(_dropModalTab==='products'){
+    return `<div class="stat-sub" style="margin-bottom:10px;">Products included in this drop.</div>
+      ${STATE.products.filter(p=>!p.archived).map(p=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);">
+          <input type="checkbox" ${d.productIds.includes(p.id)?'checked':''} onchange="toggleDropProduct('${d.id}','${p.id}',this.checked)">
+          <span style="flex:1;font-size:13px;">${p.sku} — ${esc(p.name)}</span>
+        </div>`).join('') || emptyState('No products exist yet','Add products first.','Go to Products',"go('products')")}
+      `;
+  }
+  if(_dropModalTab==='timeline'){
+    const fields = [['designDeadline','Design deadline'],['samplingDeadline','Sampling deadline'],['productionDeadline','Production deadline'],['photographyDeadline','Photography deadline'],['contentDeadline','Content deadline'],['campaignStart','Campaign start'],['launchDate','Launch date']];
+    return fields.map(([f,label])=>`<div class="field-row"><label class="flabel">${label}</label><input class="field" type="date" value="${d[f]||''}" onchange="updateDrop('${d.id}','${f}',this.value)"></div>`).join('');
+  }
+  if(_dropModalTab==='tasks'){
+    const related = STATE.tasks.filter(t=>t.dropId===d.id);
+    return `${related.length? related.map(t=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px;cursor:pointer;" onclick="closeModal();openTaskModal('${t.id}')"><span>${esc(t.name)}</span><span class="badge neutral">${esc(t.status)}</span></div>`).join('') : emptyState('No tasks linked to this drop yet','','+ Create task',"closeModal();openTaskModal();")}
+      <div style="margin-top:10px;"><button class="btn ghost sm" onclick="closeModal();openTaskModal();">+ Create task (link manually via drop field)</button></div>`;
+  }
+  if(_dropModalTab==='content'){
+    const related = STATE.marketing.content.filter(c=>c.dropId===d.id);
+    return `${related.length? related.map(c=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px;"><span>${esc(c.title)}</span><span class="badge neutral">${esc(c.status)}</span></div>`).join('') : emptyState('No content linked yet','Add content in Marketing & Content and set its drop.','Go to Marketing',"go('marketing')")}`;
+  }
+  if(_dropModalTab==='budget'){
+    return `<div class="field-row"><label class="flabel">Drop budget</label><input class="field" type="number" value="${d.budget||''}" onchange="updateDrop('${d.id}','budget',parseFloat(this.value)||0)"></div>
+      <div class="stat-sub">Detailed line-item spend lives in Finance — add expenses there and reference this drop in your notes.</div>`;
+  }
+  if(_dropModalTab==='notes'){
+    return `<div class="field-row"><label class="flabel">Notes</label><textarea class="field" rows="6" onchange="updateDrop('${d.id}','notes',this.value)">${esc(d.notes)}</textarea></div>`;
+  }
+  return '';
+}
+function updateDrop(id,field,value){ const d=STATE.drops.find(x=>x.id===id); d[field]=value; persist(); }
+function toggleDropProduct(id,pid,checked){ const d=STATE.drops.find(x=>x.id===id); if(checked){ if(!d.productIds.includes(pid)) d.productIds.push(pid); } else { d.productIds=d.productIds.filter(x=>x!==pid); } persist(); renderDropModalBody(id); }
+function archiveDrop(id){ confirmDelete('product drop (archive)', ()=>{ const d=STATE.drops.find(x=>x.id===id); d.archived=true; persist(); closeModal(); render(); }); }
+function duplicateDrop(id){ const d=STATE.drops.find(x=>x.id===id); const copy = JSON.parse(JSON.stringify(d)); copy.id=uid('d'); copy.name=d.name+' (copy)'; copy.number=STATE.drops.length+1; copy.status='Idea'; STATE.drops.push(copy); persist(); closeModal(); render(); showToast('Drop duplicated'); }
+
+/* ================= MARKETING & CONTENT ================= */
+function renderMarketing(){
+  const stages = ['Idea','Script','To Create','Creating','Editing','Approval','Scheduled','Live'];
+  if(!STATE.marketing.content.length) return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Marketing</div><div class="page-title">Marketing & Content</div><div class="page-subtitle">Ideas, drafts and scheduled posts.</div></div><div class="page-actions"><button class="btn" onclick="quickAddForm('content')">+ Add content</button></div></div>${emptyState('No content ideas yet','Capture content ideas and move them through production.','+ Add content',"quickAddForm('content')")}`;
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Marketing</div><div class="page-title">Marketing & Content</div><div class="page-subtitle">Ideas, drafts and scheduled posts.</div></div><div class="page-actions"><button class="btn" onclick="quickAddForm('content')">+ Add content</button></div></div>
+  <div class="kanban">${stages.map(stage=>{
+    const items = STATE.marketing.content.filter(c=>c.status===stage && (STATE.ui.activeFounderId==='all'||c.owner===STATE.ui.activeFounderId));
+    return `<div class="kanban-col"><h4>${stage} <span>${items.length}</span></h4>
+      ${items.map(c=>`<div class="kanban-card" onclick="openContentModal('${c.id}')"><div>${esc(c.title)}</div><div class="kc-owner"><span>${esc(c.platform)} · ${esc(c.pillar)}</span></div></div>`).join('')}
+    </div>`;
+  }).join('')}</div>`;
+}
+function openContentModal(id){
+  const c = STATE.marketing.content.find(x=>x.id===id);
+  const stages = ['Idea','Script','To Create','Creating','Editing','Approval','Scheduled','Live'];
+  openModal(`<h3>${esc(c.title)}</h3><div class="modal-sub">${esc(c.platform)} · ${esc(c.pillar)}</div>
+    <div class="field-row"><label class="flabel">Title</label><input class="field" id="cm-title" value="${esc(c.title)}"></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Platform</label><select class="sel" id="cm-plat">${['Instagram','TikTok','YouTube','Pinterest','Email','Other'].map(p=>`<option ${c.platform===p?'selected':''}>${p}</option>`).join('')}</select></div>
+      <div class="field-row"><label class="flabel">Owner</label><select class="sel" id="cm-owner">${ownerOptions(c.owner)}</select></div>
+    </div>
+    <div class="field-row"><label class="flabel">Status</label><select class="sel" id="cm-status">${stages.map(s=>`<option ${c.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Publish date</label><input class="field" type="date" id="cm-date" value="${c.publishDate||''}"></div>
+      <div class="field-row"><label class="flabel">Related drop</label><select class="sel" id="cm-drop">${dropOptions(c.dropId)}</select></div>
+    </div>
+    <div class="modal-foot"><button class="btn danger" onclick="deleteContent('${c.id}')">Delete</button><div class="spacer"></div><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveContent('${c.id}')">Save</button></div>`);
+}
+function saveContent(id){ const c=STATE.marketing.content.find(x=>x.id===id); c.title=document.getElementById('cm-title').value; c.platform=document.getElementById('cm-plat').value; c.owner=document.getElementById('cm-owner').value; c.status=document.getElementById('cm-status').value; c.publishDate=document.getElementById('cm-date').value; c.dropId=document.getElementById('cm-drop').value; persist(); closeModal(); render(); }
+function deleteContent(id){ STATE.marketing.content = STATE.marketing.content.filter(x=>x.id!==id); persist(); closeModal(); render(); }
+
+/* ================= IDEAS & DECISIONS ================= */
+function renderIdeas(){
+  const activeIdeas = STATE.ideas.filter(i=>!i.archived);
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Strategy</div><div class="page-title">Ideas & Decisions</div><div class="page-subtitle">Capture ideas, score them, and keep decisions on record.</div></div>
+    <div class="page-actions"><button class="btn ghost" onclick="quickAddForm('decision')">+ Log decision</button><button class="btn" onclick="quickAddForm('idea')">+ Add idea</button></div></div>
+  <div class="section-title">Idea board — impact × effort</div>
+  ${activeIdeas.length? renderScatter(activeIdeas) : emptyState('No ideas added','Capture product, brand, marketing and business ideas and score them on impact and effort.','+ Add idea',"quickAddForm('idea')")}
+  ${activeIdeas.length? `<div class="section-title">All ideas</div><div class="card">
+    ${activeIdeas.map(i=>{ const votes=Object.values(i.votes||{}).reduce((a,b)=>a+b,0); return `<div class="attn-row" style="cursor:pointer;" onclick="openIdeaModal('${i.id}')"><div class="attn-main"><div class="attn-title">${esc(i.title)}</div><div class="attn-meta">${esc(i.category)} · impact ${i.impact} · effort ${i.effort} · ${votes} votes</div></div><span class="badge ${i.status==='Approved'||i.status==='Implemented'?'ok':i.status==='Rejected'?'danger':'warn'}">${esc(i.status)}</span></div>`;}).join('')}
+  </div>` : ''}
+  <div class="section-title">Decision log</div>
+  ${STATE.decisions.filter(d=>!d.archived).length? `<div class="table-wrap stack-mobile"><table>
+    <thead><tr><th>Decision</th><th>Area</th><th>Decision made</th><th>Founders</th><th>Status</th></tr></thead>
+    <tbody>${STATE.decisions.filter(d=>!d.archived).map(d=>`<tr style="cursor:pointer;" onclick="openDecisionModal('${d.id}')"><td class="td-title"><strong>${esc(d.decision)}</strong></td><td data-label="Area">${esc(d.area)}</td><td data-label="Decision made">${esc(d.made)||'—'}</td><td data-label="Founders">${(d.founders||[]).map(f=>founderName(f)).join(', ')||'—'}</td><td data-label="Status"><span class="badge ${d.status==='Approved'?'ok':d.status==='Rejected'?'danger':'warn'}">${esc(d.status)}</span></td></tr>`).join('')}</tbody>
+  </table></div>` : emptyState('No decisions logged','Keep important business decisions out of group chats.','+ Log decision',"quickAddForm('decision')")}
+  `;
+}
+function renderScatter(ideas){
+  return `<div class="scatter-wrap">
+    <div class="scatter-yaxis" style="height:280px;">${[5,4,3,2,1].map(n=>`<div>${n}</div>`).join('')}</div>
+    <div style="flex:1;">
+      <div class="scatter-plot" id="scatter-plot">
+        <div class="scatter-quad-label" style="top:6px;left:8px;">BIG BETS</div>
+        <div class="scatter-quad-label" style="top:6px;right:8px;">QUICK WINS</div>
+        <div class="scatter-quad-label" style="bottom:6px;left:8px;">LOW PRIORITY</div>
+        <div class="scatter-quad-label" style="bottom:6px;right:8px;">FILL-INS</div>
+        ${[1,2,3,4].map(n=>`<div class="scatter-gridline" style="bottom:${n*20}%;"></div>`).join('')}
+        ${ideas.map(i=>{
+          const x = ((i.effort-1)/4)*100;
+          const y = ((i.impact-1)/4)*100;
+          return `<div class="scatter-dot" style="left:${x}%;bottom:${y}%;" title="${esc(i.title)}" onclick="openIdeaModal('${i.id}')"></div>`;
+        }).join('')}
+        ${[1,2,3,4,5].map(n=>`<div class="scatter-tick-x" style="left:${((n-1)/4)*100}%;">${n}</div>`).join('')}
+      </div>
+      <div class="scatter-xaxis-label" style="margin-top:22px;">EFFORT → (1 = low, 5 = high)</div>
+    </div>
+  </div>
+  <div class="scatter-yaxis-label" style="writing-mode:vertical-lr;position:relative;top:-150px;left:-2px;display:none;"></div>
+  <div style="text-align:center;margin-top:-4px;"><span class="mono" style="font-size:10.5px;color:var(--steel);">↑ IMPACT (1 = low, 5 = high)</span></div>
+  `;
+}
+function openIdeaModal(id){
+  const i = STATE.ideas.find(x=>x.id===id);
+  openModal(`<h3>${esc(i.title)}</h3><div class="modal-sub">${esc(i.category)} · submitted by ${founderName(i.submittedBy)} · ${fmtDate(i.dateAdded)}</div>
+    <div class="field-row"><label class="flabel">Title</label><input class="field" value="${esc(i.title)}" onchange="updateIdea('${i.id}','title',this.value)"></div>
+    <div class="field-row"><label class="flabel">Description</label><textarea class="field" rows="2" onchange="updateIdea('${i.id}','desc',this.value)">${esc(i.desc)}</textarea></div>
+    <div class="grid grid-3">
+      <div class="field-row"><label class="flabel">Category</label><input class="field" value="${esc(i.category)}" onchange="updateIdea('${i.id}','category',this.value)"></div>
+      <div class="field-row"><label class="flabel">Impact (1–5)</label><input class="field" type="number" min="1" max="5" value="${i.impact}" onchange="updateIdea('${i.id}','impact',parseInt(this.value)||1)"></div>
+      <div class="field-row"><label class="flabel">Effort (1–5)</label><input class="field" type="number" min="1" max="5" value="${i.effort}" onchange="updateIdea('${i.id}','effort',parseInt(this.value)||1)"></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Owner</label><select class="sel" onchange="updateIdea('${i.id}','owner',this.value)">${ownerOptions(i.owner)}</select></div>
+      <div class="field-row"><label class="flabel">Status</label><select class="sel" onchange="updateIdea('${i.id}','status',this.value)">${['Idea','Discuss','Approved','Planned','In Progress','Implemented','Rejected'].map(s=>`<option ${i.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    </div>
+    <div class="field-row"><label class="flabel">Notes</label><textarea class="field" rows="2" onchange="updateIdea('${i.id}','notes',this.value)">${esc(i.notes)}</textarea></div>
+    <div class="field-row"><label class="flabel">Votes</label><div style="display:flex;gap:8px;">${STATE.settings.founders.map(f=>`<button class="btn ${i.votes && i.votes[f.id]? '':'ghost'} sm" onclick="toggleVote('${i.id}','${f.id}')">${initials2(f.name)}</button>`).join('')}</div></div>
+    <div class="modal-foot">
+      <button class="btn danger" onclick="archiveIdea('${i.id}')">Archive</button>
+      <button class="btn ghost" onclick="convertIdeaToTask('${i.id}')">Convert to task</button>
+      <div class="spacer"></div><button class="btn ghost" onclick="closeModal();render();">Close</button>
+    </div>`);
+}
+function updateIdea(id,field,value){ const i=STATE.ideas.find(x=>x.id===id); i[field]=value; persist(); }
+function toggleVote(id,fid){ const i=STATE.ideas.find(x=>x.id===id); i.votes=i.votes||{}; i.votes[fid]=i.votes[fid]?0:1; persist(); openIdeaModal(id); }
+function archiveIdea(id){ const i=STATE.ideas.find(x=>x.id===id); i.archived=true; persist(); closeModal(); render(); }
+function convertIdeaToTask(id){
+  const i = STATE.ideas.find(x=>x.id===id);
+  STATE.tasks.unshift({id:uid('t'), name:i.title, description:i.desc, owner:i.owner||'', support:[], area:i.category||'General', project:'', productId:'', supplierId:'', dropId:'', priority:'Medium', status:'Not Started', start:'', due:'', effort:'', dependencies:'', recurring:false, subtasks:[], notes:'Converted from idea board.', blocker:'', created:todayISO(), completed:''});
+  i.status='Planned'; persist(); closeModal(); showToast('Converted to task'); go('tasks');
+}
+function openDecisionModal(id){
+  const d = STATE.decisions.find(x=>x.id===id);
+  openModal(`<h3>${esc(d.decision)}</h3><div class="modal-sub">${esc(d.area)}</div>
+    <div class="field-row"><label class="flabel">Decision</label><input class="field" value="${esc(d.decision)}" onchange="updateDecision('${d.id}','decision',this.value)"></div>
+    <div class="field-row"><label class="flabel">Options considered</label><textarea class="field" rows="2" onchange="updateDecision('${d.id}','options',this.value)">${esc(d.options)}</textarea></div>
+    <div class="field-row"><label class="flabel">Decision made</label><input class="field" value="${esc(d.made)}" onchange="updateDecision('${d.id}','made',this.value)"></div>
+    <div class="field-row"><label class="flabel">Reason</label><textarea class="field" rows="2" onchange="updateDecision('${d.id}','reason',this.value)">${esc(d.reason)}</textarea></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Date</label><input class="field" type="date" value="${d.date||''}" onchange="updateDecision('${d.id}','date',this.value)"></div>
+      <div class="field-row"><label class="flabel">Status</label><select class="sel" onchange="updateDecision('${d.id}','status',this.value)">${['Proposed','Discussion','Approved','Rejected','Revisit Later'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    </div>
+    <div class="field-row"><label class="flabel">Founders involved</label><div style="display:flex;gap:6px;">${STATE.settings.founders.map(f=>`<button class="btn ${(d.founders||[]).includes(f.id)?'':'ghost'} sm" onclick="toggleDecisionFounder('${d.id}','${f.id}')">${initials2(f.name)}</button>`).join('')}</div></div>
+    <div class="modal-foot"><button class="btn danger" onclick="archiveDecision('${d.id}')">Archive</button><div class="spacer"></div><button class="btn ghost" onclick="closeModal();render();">Close</button></div>`);
+}
+function updateDecision(id,field,value){ const d=STATE.decisions.find(x=>x.id===id); d[field]=value; persist(); }
+function toggleDecisionFounder(id,fid){ const d=STATE.decisions.find(x=>x.id===id); d.founders=d.founders||[]; const i=d.founders.indexOf(fid); if(i>=0) d.founders.splice(i,1); else d.founders.push(fid); persist(); openDecisionModal(id); }
+function archiveDecision(id){ const d=STATE.decisions.find(x=>x.id===id); d.archived=true; persist(); closeModal(); render(); }
+
+/* ================= CALENDAR ================= */
+function renderCalendar(){
+  const mode = STATE.ui.calMode;
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Schedule</div><div class="page-title">Master Calendar</div><div class="page-subtitle">Every deadline, task and event in one view.</div></div>
+    <div class="page-actions"><div class="tab-toggle">
+      <div class="tt-item ${mode==='month'?'active':''}" onclick="setCalMode('month')">MONTH</div>
+      <div class="tt-item ${mode==='week'?'active':''}" onclick="setCalMode('week')">WEEK</div>
+      <div class="tt-item ${mode==='agenda'?'active':''}" onclick="setCalMode('agenda')">AGENDA</div>
+    </div></div></div>
+    ${mode==='month'?renderCalMonth():mode==='week'?renderCalWeek():renderCalAgenda()}
+  `;
+}
+function setCalMode(m){ STATE.ui.calMode=m; render(); }
+function renderCalMonth(){
+  const y=STATE.ui.calYear, m=STATE.ui.calMonth;
+  const first = new Date(y,m,1);
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const startWeekday = (first.getDay()+6)%7; // Monday=0
+  const prevDays = new Date(y,m,0).getDate();
+  const cells = [];
+  for(let i=0;i<startWeekday;i++) cells.push({day:prevDays-startWeekday+1+i, other:true, dateStr:null});
+  for(let d=1; d<=daysInMonth; d++) cells.push({day:d, other:false, dateStr:`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`});
+  while(cells.length%7!==0) { const idx=cells.length-(startWeekday+daysInMonth); cells.push({day:idx+1, other:true, dateStr:null}); }
+  const events = allEvents();
+  const eventsByDate = {}; events.forEach(e=>{ eventsByDate[e.date]=eventsByDate[e.date]||[]; eventsByDate[e.date].push(e); });
+  const monthLabel = first.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const today = todayISO();
+  return `
+  <div class="cal-controls">
+    <button class="btn ghost sm" onclick="calNav(-1)">← Previous</button>
+    <button class="btn ghost sm" onclick="calToday()">Today</button>
+    <button class="btn ghost sm" onclick="calNav(1)">Next →</button>
+    <div style="font-weight:700;font-size:15px;margin-left:8px;">${monthLabel.toUpperCase()}</div>
+  </div>
+  <div class="cal-grid">
+    ${['MON','TUE','WED','THU','FRI','SAT','SUN'].map(d=>`<div class="cal-headcell">${d}</div>`).join('')}
+    ${cells.map(c=>{
+      const evs = c.dateStr ? (eventsByDate[c.dateStr]||[]) : [];
+      return `<div class="cal-cell ${c.other?'other-month':''} ${c.dateStr===today?'today':''}" onclick="${c.dateStr?`openDayModal('${c.dateStr}')`:''}">
+        <div class="cal-daynum">${c.day}</div>
+        <div>${evs.slice(0,3).map(e=>`<div class="cal-event ${e.sev}">${esc(e.title)}</div>`).join('')}${evs.length>3?`<div class="stat-sub">+${evs.length-3} more</div>`:''}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+function calNav(dir){ let m=STATE.ui.calMonth+dir, y=STATE.ui.calYear; if(m<0){m=11;y--;} if(m>11){m=0;y++;} STATE.ui.calMonth=m; STATE.ui.calYear=y; render(); }
+function calToday(){ STATE.ui.calMonth=new Date().getMonth(); STATE.ui.calYear=new Date().getFullYear(); render(); }
+function openDayModal(dateStr){
+  const events = allEvents().filter(e=>e.date===dateStr);
+  openModal(`<h3>${fmtDate(dateStr)}</h3>
+    ${events.length? events.map(e=>`<div class="attn-row"><div class="attn-main"><div class="attn-title">${esc(e.title)}</div><div class="attn-meta">${e.type}${e.notes?' · '+esc(e.notes):''}</div></div>${e.ref.kind==='manual'?`<button class="btn ghost sm" onclick="deleteCalEvent('${e.ref.id}')">Delete</button>`:''}</div>`).join('') : `<div class="stat-sub">No events on this day.</div>`}
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Close</button><button class="btn" onclick="quickAddEventForDate('${dateStr}')">+ Add event</button></div>`);
+}
+function quickAddEventForDate(dateStr){ closeModal(); quickAddForm('event'); setTimeout(()=>{ const el=document.getElementById('qa-edate'); if(el) el.value=dateStr; },0); }
+function deleteCalEvent(id){ STATE.calendarEvents=STATE.calendarEvents.filter(c=>c.id!==id); persist(); closeModal(); render(); }
+function renderCalWeek(){
+  const now = new Date();
+  const day = (now.getDay()+6)%7;
+  const monday = new Date(now); monday.setDate(now.getDate()-day);
+  const days = [...Array(7)].map((_,i)=>{ const d=new Date(monday); d.setDate(monday.getDate()+i); return d.toISOString().slice(0,10); });
+  const events = allEvents();
+  return `<div class="grid grid-4" style="grid-template-columns:repeat(7,1fr);">
+    ${days.map(dstr=>{
+      const dayEvents = events.filter(e=>e.date===dstr);
+      const label = new Date(dstr+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric'});
+      return `<div class="card tight" style="${dstr===todayISO()?'border-color:var(--navy);':''}">
+        <div class="mono" style="font-size:11px;color:var(--steel);">${label.toUpperCase()}</div>
+        ${dayEvents.length? dayEvents.map(e=>`<div class="cal-event ${e.sev}" style="margin-top:6px;">${esc(e.title)}</div>`).join('') : `<div class="stat-sub" style="margin-top:6px;">—</div>`}
+        <button class="btn ghost xs" style="margin-top:8px;" onclick="quickAddEventForDate('${dstr}')">+ Add</button>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+function renderCalAgenda(){
+  const events = allEvents().filter(e=>e.date>=addDays(-3)).sort((a,b)=>a.date.localeCompare(b.date));
+  const grouped={}; events.forEach(e=>{ grouped[e.date]=grouped[e.date]||[]; grouped[e.date].push(e); });
+  const dates = Object.keys(grouped).slice(0,40);
+  return `<div class="card">${dates.length? dates.map(date=>`
+    <div style="display:flex;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);">
+      <div class="mono" style="width:90px;flex-shrink:0;color:var(--steel);font-size:12px;padding-top:2px;">${fmtDate(date)}</div>
+      <div style="flex:1;">${grouped[date].map(e=>`<div style="margin-bottom:4px;"><span class="badge ${e.sev||'neutral'}" style="margin-right:8px;">${e.type}</span><span style="font-size:13px;">${esc(e.title)}</span></div>`).join('')}</div>
+    </div>`).join('') : emptyState('No upcoming dated items','Add tasks, drop deadlines or calendar events to see them here.')}</div>`;
+}
+
+/* ================= NOTES ================= */
+function renderNotes(){
+  const folders = STATE.notes.folders;
+  const sel = STATE.ui.notesSelectedFolder;
+  const notesInFolder = STATE.notes.items.filter(n=>!n.archived && n.folderId===sel);
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Notebook</div><div class="page-title">Notes</div><div class="page-subtitle">A shared notebook for the three of you.</div></div>
+    <div class="page-actions"><button class="btn ghost sm" onclick="openNewFolderModal()">+ New folder</button><button class="btn" onclick="openNoteModal()">+ New note</button></div></div>
+  <div class="field-row"><input class="search-input" style="width:100%;max-width:320px;" placeholder="Search notes..." oninput="filterNotes(this.value)" id="notes-search"></div>
+  <div class="notes-layout">
+    <div class="card tight">
+      <div class="tree">${renderFolderTree(null)}</div>
+    </div>
+    <div>
+      <div class="section-title">${esc(folders.find(f=>f.id===sel)?.name||'Notes')} <span class="count">${notesInFolder.length}</span></div>
+      <div id="notes-list">
+        ${notesInFolder.length? notesInFolder.map(n=>renderNoteCard(n)).join('') : emptyState('No notes in this folder','Capture meeting notes, ideas and reference material.','+ New note',"openNoteModal()")}
+      </div>
+    </div>
+  </div>`;
+}
+function renderFolderTree(parentId){
+  const children = STATE.notes.folders.filter(f=>f.parentId===parentId);
+  if(!children.length) return '';
+  return `<div class="${parentId?'tree-children':''}">${children.map(f=>`
+    <div class="tree-item ${STATE.ui.notesSelectedFolder===f.id?'active':''}" onclick="selectFolder('${f.id}')">
+      <span style="flex:1;">${esc(f.name)}</span>
+      ${f.id!=='root'?`<button class="btn ghost xs" onclick="event.stopPropagation();renameFolder('${f.id}')" title="Rename">✎</button>`:''}
+    </div>
+    ${renderFolderTree(f.id)}
+  `).join('')}</div>`;
+}
+function selectFolder(id){ STATE.ui.notesSelectedFolder=id; render(); }
+function openNewFolderModal(){
+  openModal(`<h3>New folder</h3>
+    <div class="field-row"><label class="flabel">Folder name</label><input class="field" id="nf-name" placeholder="e.g. Product"></div>
+    <div class="field-row"><label class="flabel">Parent folder</label><select class="sel" id="nf-parent">${folderOptionsAll(STATE.ui.notesSelectedFolder)}</select></div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitNewFolder()">Create folder</button></div>`);
+}
+function folderOptionsAll(sel){ return STATE.notes.folders.map(f=>`<option value="${f.id}" ${sel===f.id?'selected':''}>${esc(f.name)}</option>`).join(''); }
+function folderOptions(sel){ return folderOptionsAll(sel); }
+function submitNewFolder(){
+  const name = document.getElementById('nf-name').value.trim(); if(!name){showToast('Enter a folder name');return;}
+  STATE.notes.folders.push({id:uid('fld'), name, parentId:document.getElementById('nf-parent').value});
+  persist(); closeModal(); render();
+}
+function renameFolder(id){
+  const f = STATE.notes.folders.find(x=>x.id===id);
+  openModal(`<h3>Rename folder</h3><div class="field-row"><input class="field" id="rf-name" value="${esc(f.name)}"></div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="submitRenameFolder('${id}')">Save</button></div>`);
+}
+function submitRenameFolder(id){ const f=STATE.notes.folders.find(x=>x.id===id); f.name=document.getElementById('rf-name').value.trim()||f.name; persist(); closeModal(); render(); }
+
+function mdToHtml(md,noteId){
+  if(!md) return '<div class="stat-sub">Empty note.</div>';
+  const lines = md.split('\n');
+  let html=''; let inList=false;
+  lines.forEach((line,idx)=>{
+    let l = line;
+    if(/^#\s+/.test(l)){ if(inList){html+='</ul>';inList=false;} html+=`<h4>${esc(l.replace(/^#\s+/,''))}</h4>`; return; }
+    if(/^##\s+/.test(l)){ if(inList){html+='</ul>';inList=false;} html+=`<h5>${esc(l.replace(/^##\s+/,''))}</h5>`; return; }
+    const checkMatch = l.match(/^\[( |x|X)\]\s+(.*)/);
+    if(checkMatch){ if(inList){html+='</ul>';inList=false;} const done = checkMatch[1].toLowerCase()==='x'; html+=`<div class="nb-check ${done?'done':''}" onclick="toggleNoteCheckbox('${noteId}',${idx})"><input type="checkbox" ${done?'checked':''} onclick="event.stopPropagation()" onchange="toggleNoteCheckbox('${noteId}',${idx})"><span>${esc(checkMatch[2])}</span></div>`; return; }
+    if(/^-\s+/.test(l)){ if(!inList){html+='<ul>';inList=true;} html+=`<li>${esc(l.replace(/^-\s+/,''))}</li>`; return; }
+    if(inList){html+='</ul>';inList=false;}
+    if(l.trim()==='') { html+='<br>'; return; }
+    html += `<p style="margin:4px 0;font-size:13px;">${esc(l).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')}</p>`;
+  });
+  if(inList) html+='</ul>';
+  return html;
+}
+function toggleNoteCheckbox(noteId, lineIdx){
+  const n = STATE.notes.items.find(x=>x.id===noteId);
+  const lines = n.body.split('\n');
+  const l = lines[lineIdx];
+  const m = l.match(/^\[( |x|X)\]\s+(.*)/);
+  if(m){ const done = m[1].toLowerCase()==='x'; lines[lineIdx] = `[${done?' ':'x'}] ${m[2]}`; n.body=lines.join('\n'); n.editedDate=todayISO(); persist(); render(); }
+}
+function renderNoteCard(n){
+  return `<div class="card" style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div><div style="font-weight:700;font-size:14px;">${esc(n.title)}</div><div class="stat-sub">${founderName(n.createdBy)} · edited ${fmtDate(n.editedDate)}</div></div>
+      <div style="display:flex;gap:4px;">
+        <button class="btn ghost xs" onclick="openNoteModal('${n.id}')">Edit</button>
+        <button class="btn ghost xs" onclick="duplicateNote('${n.id}')">Duplicate</button>
+        <button class="btn ghost xs" onclick="archiveNote('${n.id}')">Archive</button>
+      </div>
+    </div>
+    <div class="note-body-render" style="margin-top:8px;">${mdToHtml(n.body, n.id)}</div>
+    ${n.tags&&n.tags.length? `<div style="margin-top:8px;">${n.tags.map(t=>`<span class="badge neutral" style="margin-right:4px;">${esc(t)}</span>`).join('')}</div>`:''}
+  </div>`;
+}
+function filterNotes(q){
+  const list = document.getElementById('notes-list');
+  const notesInFolder = STATE.notes.items.filter(n=>!n.archived && n.folderId===STATE.ui.notesSelectedFolder && (!q || n.title.toLowerCase().includes(q.toLowerCase()) || (n.body||'').toLowerCase().includes(q.toLowerCase())));
+  list.innerHTML = notesInFolder.length? notesInFolder.map(n=>renderNoteCard(n)).join('') : emptyState('No matching notes','','');
+}
+function openNoteModal(id){
+  const n = id ? STATE.notes.items.find(x=>x.id===id) : {id:'', title:'', folderId:STATE.ui.notesSelectedFolder, createdBy:STATE.ui.activeFounderId==='all'?'':STATE.ui.activeFounderId, createdDate:todayISO(), editedDate:todayISO(), body:'', tags:[], productId:'', supplierId:'', dropId:''};
+  const isNew = !id;
+  openModal(`<h3>${isNew?'New note':'Edit note'}</h3>
+    <div class="field-row"><label class="flabel">Title</label><input class="field" id="nm-title" value="${esc(n.title)}"></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Folder</label><select class="sel" id="nm-folder">${folderOptionsAll(n.folderId)}</select></div>
+      <div class="field-row"><label class="flabel">Tags (comma separated)</label><input class="field" id="nm-tags" value="${(n.tags||[]).join(', ')}"></div>
+    </div>
+    <div class="field-row"><label class="flabel">Note — supports # heading, ## subheading, - bullet, [ ] checkbox, **bold**</label><textarea class="field" id="nm-body" rows="8">${esc(n.body)}</textarea></div>
+    <div class="grid grid-3">
+      <div class="field-row"><label class="flabel">Related product</label><select class="sel" id="nm-product">${productOptions(n.productId)}</select></div>
+      <div class="field-row"><label class="flabel">Related supplier</label><select class="sel" id="nm-supplier">${supplierOptions(n.supplierId)}</select></div>
+      <div class="field-row"><label class="flabel">Related drop</label><select class="sel" id="nm-drop">${dropOptions(n.dropId)}</select></div>
+    </div>
+    <div class="modal-foot">
+      ${!isNew?`<button class="btn danger" onclick="archiveNote('${n.id}')">Archive</button>`:''}
+      <div class="spacer"></div><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveNoteModal('${n.id}')">${isNew?'Create note':'Save note'}</button>
+    </div>`, true);
+}
+function saveNoteModal(id){
+  const data = { title:document.getElementById('nm-title').value.trim(), folderId:document.getElementById('nm-folder').value, tags:document.getElementById('nm-tags').value.split(',').map(t=>t.trim()).filter(Boolean), body:document.getElementById('nm-body').value, productId:document.getElementById('nm-product').value, supplierId:document.getElementById('nm-supplier').value, dropId:document.getElementById('nm-drop').value, editedDate:todayISO() };
+  if(!data.title){ showToast('Enter a title'); return; }
+  if(!id){ STATE.notes.items.unshift(Object.assign({id:uid('n'), createdBy:STATE.ui.activeFounderId==='all'?'':STATE.ui.activeFounderId, createdDate:todayISO(), archived:false}, data)); }
+  else{ const n=STATE.notes.items.find(x=>x.id===id); Object.assign(n,data); }
+  persist(); closeModal(); showToast('Note saved'); render();
+}
+function duplicateNote(id){ const n=STATE.notes.items.find(x=>x.id===id); const copy=JSON.parse(JSON.stringify(n)); copy.id=uid('n'); copy.title=n.title+' (copy)'; copy.createdDate=todayISO(); copy.editedDate=todayISO(); STATE.notes.items.unshift(copy); persist(); render(); }
+function archiveNote(id){ const n=STATE.notes.items.find(x=>x.id===id); n.archived=true; persist(); closeModal(); render(); }
+
+/* ================= BRAND LAB ================= */
+function renderBrand(){
+  const tab = STATE.ui.brandTab;
+  const tabs = [['overview','Overview'],['logos','Logos'],['colour','Colour Lab'],['type','Typography'],['mockups','Mockups'],['assets','Brand Assets'],['notes','Notes']];
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / Identity</div><div class="page-title">Brand Lab</div><div class="page-subtitle">Reference and experiment with the AVORA identity.</div></div></div>
+  <div class="modal-tabs" style="margin-bottom:20px;">${tabs.map(([k,l])=>`<div class="modal-tab ${tab===k?'active':''}" onclick="setBrandTab('${k}')">${l.toUpperCase()}</div>`).join('')}</div>
+  ${ tab==='overview'?renderBrandOverview(): tab==='logos'?renderLogoLab(): tab==='colour'?renderColourLab(): tab==='type'?renderTypeLab(): tab==='mockups'?renderMockupLab(): tab==='assets'?renderBrandAssets(): renderBrandNotes() }
+  `;
+}
+function setBrandTab(t){ STATE.ui.brandTab=t; render(); }
+function renderBrandOverview(){
+  return `<div class="card" style="background:var(--navy);color:#fff;padding:32px;">
+    <div class="mono tracked" style="font-size:11px;color:var(--sage-2);">AVORA / BRAND LINE</div>
+    <div style="font-size:26px;font-weight:700;margin-top:8px;line-height:1.25;">Built for the court.<br>Designed for life.</div>
+  </div>
+  <div class="section-title">Creative principles</div>
+  <div class="card"><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.9;">
+    <li>Prioritise simplicity, fit, fabric, movement and detail over branding.</li>
+    <li>Keep branding understated and intentional — no oversized logos.</li>
+    <li>Avoid generic gymwear and obvious padel clichés.</li>
+    <li>Generous negative space, strong typography, editorial composition.</li>
+    <li>Build a visual language recognisable without relying solely on the wordmark.</li>
+  </ul></div>`;
+}
+function renderLogoLab(){
+  const groups = [['Approved','APPROVED / CURRENT'],['Exploration','EXPLORATION'],['Archived','ARCHIVED']];
+  return `<div class="page-actions" style="margin-bottom:16px;"><button class="btn" onclick="openLogoModal()">+ Add logo concept</button></div>
+  ${groups.map(([status,label])=>{
+    const items = STATE.brand.logos.filter(l=>l.status===status || (status==='Exploration' && (l.status==='Exploring')));
+    return `<div class="section-title">${label} <span class="count">${items.length}</span></div>
+    ${items.length? `<div class="grid grid-3">${items.map(l=>`<div class="card">
+      <div style="display:flex;justify-content:space-between;"><strong style="font-size:13px;">${esc(l.name)}</strong><span class="badge neutral">${esc(l.type)}</span></div>
+      <div class="stat-sub">v${esc(l.version)} ${l.date?'· '+fmtDate(l.date):''}</div>
+      ${l.notes?`<div class="stat-sub" style="margin-top:6px;">${esc(l.notes)}</div>`:''}
+      <div class="divider"></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn ghost xs" onclick="openLogoModal('${l.id}')">Edit</button>
+        ${status!=='Approved'?`<button class="btn ghost xs" onclick="setLogoStatus('${l.id}','Approved')">Mark approved</button>`:''}
+        ${status!=='Archived'?`<button class="btn ghost xs" onclick="setLogoStatus('${l.id}','Archived')">Archive</button>`:''}
+      </div>
+    </div>`).join('')}</div>` : emptyState(`No ${label.toLowerCase()} logo records`,'')}`;
+  }).join('')}`;
+}
+function openLogoModal(id){
+  const l = id? STATE.brand.logos.find(x=>x.id===id) : {id:'',name:'',type:'Experimental',version:'v1',status:'Exploring',notes:'',date:'',approvedBy:''};
+  openModal(`<h3>${id?'Edit logo concept':'Add logo concept'}</h3>
+    <div class="field-row"><label class="flabel">Name</label><input class="field" id="lg-name" value="${esc(l.name)}" placeholder="e.g. AVORA Secondary Lockup"></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Type</label><select class="sel" id="lg-type">${['Primary Wordmark','Secondary Mark','Lockup','Icon','Experimental'].map(t=>`<option ${l.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="field-row"><label class="flabel">Version</label><input class="field" id="lg-version" value="${esc(l.version)}"></div>
+    </div>
+    <div class="field-row"><label class="flabel">Status</label><select class="sel" id="lg-status">${['Approved','Exploring','Archived'].map(s=>`<option ${l.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="field-row"><label class="flabel">Notes / reference description</label><textarea class="field" id="lg-notes" rows="3" placeholder="Describe the concept — image upload isn't supported in this workspace, so use this as the reference record.">${esc(l.notes)}</textarea></div>
+    <div class="modal-foot">${id?`<button class="btn danger" onclick="deleteLogo('${l.id}')">Remove</button>`:''}<div class="spacer"></div><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveLogo('${l.id}')">Save</button></div>`);
+}
+function saveLogo(id){
+  const data = {name:document.getElementById('lg-name').value.trim(), type:document.getElementById('lg-type').value, version:document.getElementById('lg-version').value, status:document.getElementById('lg-status').value, notes:document.getElementById('lg-notes').value};
+  if(!data.name){showToast('Enter a name');return;}
+  if(!id) STATE.brand.logos.push(Object.assign({id:uid('lg'), date:todayISO(), approvedBy:'', archived:false}, data));
+  else Object.assign(STATE.brand.logos.find(x=>x.id===id), data);
+  persist(); closeModal(); render();
+}
+function setLogoStatus(id,status){ const l=STATE.brand.logos.find(x=>x.id===id); l.status=status; persist(); render(); }
+function deleteLogo(id){ STATE.brand.logos = STATE.brand.logos.filter(x=>x.id!==id); persist(); closeModal(); render(); }
+
+function renderColourLab(){
+  const groups = {};
+  STATE.brand.colours.forEach(c=>{ groups[c.group]=groups[c.group]||[]; groups[c.group].push(c); });
+  return `<div class="page-actions" style="margin-bottom:16px;"><button class="btn" onclick="openColourModal()">+ Add colour</button></div>
+  ${Object.keys(groups).map(g=>`
+    <div class="section-title">${g.toUpperCase()} <span class="count">${groups[g].length}</span></div>
+    <div class="grid grid-4">${groups[g].map((c,idx)=>`
+      <div>
+        <div class="swatch" style="background:${c.hex};${c.hex.toUpperCase()==='#F7F5EF'?'border:1px solid var(--line);':''}"><span style="${c.hex.toUpperCase()==='#F7F5EF'?'color:#202226;text-shadow:none;':''}">${c.hex}</span></div>
+        <div style="font-size:12.5px;margin-top:6px;font-weight:600;">${esc(c.name)}</div>
+        <div class="stat-sub">${esc(c.role)||''}</div>
+        <div style="margin-top:4px;"><span class="badge ${c.status==='Core'?'navy':c.status==='Rejected'?'danger':'neutral'}">${esc(c.status)}</span></div>
+        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;">
+          <button class="btn ghost xs" onclick="openColourModal('${c.id}')">Edit</button>
+          ${c.status==='Core'? `<button class="btn ghost xs" onclick="moveColourToExploration('${c.id}')">Move to exploration</button>` : `<button class="btn ghost xs" onclick="duplicateColour('${c.id}')">Duplicate</button><button class="btn ghost xs" onclick="deleteColour('${c.id}')">Delete</button>`}
+        </div>
+      </div>`).join('')}</div>
+  `).join('')}
+  <div class="section-title">Palette groups</div>
+  <div style="display:flex;gap:8px;">
+    <input class="field" id="new-group-name" placeholder="e.g. Autumn Capsule" style="max-width:260px;">
+    <button class="btn ghost sm" onclick="addPaletteGroup()">Create palette</button>
+  </div>`;
+}
+function openColourModal(id){
+  const c = id ? STATE.brand.colours.find(x=>x.id===id) : {id:'',name:'',hex:'#000000',role:'',status:'Exploring',group:'Core Palette'};
+  const groups = [...new Set(STATE.brand.colours.map(x=>x.group))];
+  openModal(`<h3>${id?'Edit colour':'Add colour'}</h3>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Colour name</label><input class="field" id="cl-name" value="${esc(c.name)}"></div>
+      <div class="field-row"><label class="flabel">HEX</label><div style="display:flex;gap:6px;"><input type="color" id="cl-picker" value="${c.hex}" style="width:44px;height:38px;border:1px solid var(--line);padding:2px;"><input class="field" id="cl-hex" value="${c.hex}"></div></div>
+    </div>
+    <div class="field-row"><label class="flabel">Role</label><input class="field" id="cl-role" value="${esc(c.role)}" placeholder="e.g. Seasonal accent"></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Status</label><select class="sel" id="cl-status"><option ${c.status==='Core'?'selected':''} ${c.status!=='Core'?'':''}>Core</option><option ${c.status==='Exploring'?'selected':''}>Exploring</option><option ${c.status==='Seasonal'?'selected':''}>Seasonal</option><option ${c.status==='Rejected'?'selected':''}>Rejected</option><option ${c.status==='Archived'?'selected':''}>Archived</option></select></div>
+      <div class="field-row"><label class="flabel">Palette group</label><select class="sel" id="cl-group">${groups.map(g=>`<option ${c.group===g?'selected':''}>${g}</option>`).join('')}</select></div>
+    </div>
+    <div class="modal-foot">${id?`<button class="btn danger" onclick="deleteColour('${c.id}')">Delete</button>`:''}<div class="spacer"></div><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveColour('${c.id}')">Save</button></div>`);
+  document.getElementById('cl-picker').addEventListener('input', e=>{ document.getElementById('cl-hex').value = e.target.value; });
+}
+function saveColour(id){
+  const data = {name:document.getElementById('cl-name').value.trim(), hex:document.getElementById('cl-hex').value.trim(), role:document.getElementById('cl-role').value, status:document.getElementById('cl-status').value, group:document.getElementById('cl-group').value};
+  if(!data.name||!/^#([0-9A-Fa-f]{3}){1,2}$/.test(data.hex)){ showToast('Enter a name and valid hex value'); return; }
+  const existing = STATE.brand.colours.find(x=>x.id===id);
+  if(existing && existing.status==='Core' && data.status!=='Core'){ /* allowed: explicit move via dropdown counts as intentional */ }
+  if(!id) STATE.brand.colours.push(Object.assign({id:uid('col')}, data));
+  else Object.assign(existing, data);
+  persist(); closeModal(); render();
+}
+function moveColourToExploration(id){ const c=STATE.brand.colours.find(x=>x.id===id); c.status='Exploring'; persist(); render(); showToast('Moved to exploration'); }
+function duplicateColour(id){ const c=STATE.brand.colours.find(x=>x.id===id); const copy={...c,id:uid('col'),name:c.name+' (copy)'}; STATE.brand.colours.push(copy); persist(); render(); }
+function deleteColour(id){
+  const c = STATE.brand.colours.find(x=>x.id===id);
+  if(c.status==='Core'){ showToast('Core colours are moved to exploration, not deleted'); return; }
+  confirmDelete('colour', ()=>{ STATE.brand.colours = STATE.brand.colours.filter(x=>x.id!==id); persist(); render(); });
+}
+function addPaletteGroup(){
+  const inp = document.getElementById('new-group-name'); const name = inp.value.trim(); if(!name) return;
+  STATE.brand.colours.push({id:uid('col'), name:'New colour', hex:'#708078', role:'', status:'Exploring', group:name});
+  persist(); render();
+}
+function renderTypeLab(){
+  return `<div class="card"><div class="stat-label">Typography system</div>
+    <div class="stat-sub" style="margin-top:8px;">Bold condensed sans for headlines, tracked monospace for navigation, SKUs, prices and system labels — reinforces performance/technical credibility without needing colour or imagery to do the work.</div>
+    <div class="divider"></div>
+    <div style="font-size:28px;font-weight:700;letter-spacing:-0.01em;">Built for the court.</div>
+    <div class="mono tracked" style="font-size:12px;color:var(--steel);margin-top:8px;">APT-001 · PERFORMANCE T-SHIRT · £78.00</div>
+  </div>`;
+}
+function renderMockupLab(){
+  const cats = ['T-Shirt','Shorts','Quarter Zip','Accessories','Packaging','Labels','Website','Social','Campaign','Other'];
+  return `<div class="page-actions" style="margin-bottom:16px;"><button class="btn" onclick="openMockupModal()">+ Add mockup</button></div>
+  ${STATE.brand.mockups.length? `<div class="grid grid-3">${STATE.brand.mockups.map(mk=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;"><strong style="font-size:13px;">${esc(mk.name)}</strong><span class="badge ${mk.status==='Approved'?'ok':mk.status==='Revision'?'warn':'neutral'}">${esc(mk.status)}</span></div>
+      <div class="stat-sub">${esc(mk.category)} · v${esc(mk.version)} · ${founderName(mk.owner)}</div>
+      ${mk.feedback?`<div class="stat-sub" style="margin-top:6px;">Feedback: ${esc(mk.feedback)}</div>`:''}
+      <div style="margin-top:8px;"><button class="btn ghost xs" onclick="openMockupModal('${mk.id}')">Edit</button></div>
+    </div>`).join('')}</div>` : emptyState('No mockups recorded yet','Track garment, packaging and campaign mockups as they move through review.','+ Add mockup',"openMockupModal()")}
+  `;
+}
+function openMockupModal(id){
+  const mk = id? STATE.brand.mockups.find(x=>x.id===id) : {id:'',name:'',category:'T-Shirt',status:'Concept',version:'v1',owner:'',notes:'',feedback:''};
+  const cats = ['T-Shirt','Shorts','Quarter Zip','Accessories','Packaging','Labels','Website','Social','Campaign','Other'];
+  openModal(`<h3>${id?'Edit mockup':'Add mockup'}</h3>
+    <div class="field-row"><label class="flabel">Name</label><input class="field" id="mk-name" value="${esc(mk.name)}"></div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Category</label><select class="sel" id="mk-cat">${cats.map(c=>`<option ${mk.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="field-row"><label class="flabel">Version</label><input class="field" id="mk-version" value="${esc(mk.version)}"></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Status</label><select class="sel" id="mk-status">${['Concept','Review','Revision','Approved','Archived'].map(s=>`<option ${mk.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="field-row"><label class="flabel">Owner</label><select class="sel" id="mk-owner">${ownerOptions(mk.owner)}</select></div>
+    </div>
+    <div class="field-row"><label class="flabel">Notes</label><textarea class="field" id="mk-notes" rows="2">${esc(mk.notes)}</textarea></div>
+    <div class="field-row"><label class="flabel">Founder feedback</label><textarea class="field" id="mk-feedback" rows="2">${esc(mk.feedback)}</textarea></div>
+    <div class="modal-foot">${id?`<button class="btn danger" onclick="deleteMockup('${mk.id}')">Remove</button>`:''}<div class="spacer"></div><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveMockup('${mk.id}')">Save</button></div>`);
+}
+function saveMockup(id){
+  const data = {name:document.getElementById('mk-name').value.trim(), category:document.getElementById('mk-cat').value, version:document.getElementById('mk-version').value, status:document.getElementById('mk-status').value, owner:document.getElementById('mk-owner').value, notes:document.getElementById('mk-notes').value, feedback:document.getElementById('mk-feedback').value};
+  if(!data.name){showToast('Enter a name');return;}
+  if(!id) STATE.brand.mockups.push(Object.assign({id:uid('mk')}, data));
+  else Object.assign(STATE.brand.mockups.find(x=>x.id===id), data);
+  persist(); closeModal(); render();
+}
+function deleteMockup(id){ STATE.brand.mockups = STATE.brand.mockups.filter(x=>x.id!==id); persist(); closeModal(); render(); }
+function renderBrandAssets(){
+  return `<div class="grid grid-3">
+    <div class="card"><div class="stat-label">Primary wordmark</div><div class="stat-sub" style="margin-top:6px;">AVORA — approved, established asset. Do not redesign without founder approval.</div></div>
+    <div class="card"><div class="stat-label">Secondary mark</div><div class="stat-sub" style="margin-top:6px;">AV performance mark — for labels, hardware and small-format applications.</div></div>
+    <div class="card"><div class="stat-label">Full guidelines</div><div class="stat-sub" style="margin-top:6px;">Store the full guidelines document reference in Notes → Brand, or attach a link once available.</div></div>
+  </div>`;
+}
+function renderBrandNotes(){
+  return `<div class="field-row"><label class="flabel">Brand Lab notes — experiments, references, open questions</label><textarea class="field" rows="10" oninput="STATE.brand.notes=this.value" onchange="persist()">${esc(STATE.brand.notes)}</textarea></div>`;
+}
+
+/* ================= SETTINGS ================= */
+function renderSettings(){
+  return `<div class="page-header"><div><div class="page-eyebrow mono">Avora / System</div><div class="page-title">Settings</div><div class="page-subtitle">Founders, launch date and business defaults.</div></div></div>
+  <div class="section-title">Founders</div>
+  <div class="grid grid-3">
+    ${STATE.settings.founders.map(f=>`<div class="card">
+      <div class="field-row"><label class="flabel">Name</label><input class="field" value="${esc(f.name)}" onchange="updateFounder('${f.id}','name',this.value)"></div>
+      <div class="grid grid-2">
+        <div class="field-row"><label class="flabel">Initials</label><input class="field" value="${esc(f.initials)}" onchange="updateFounder('${f.id}','initials',this.value)"></div>
+        <div class="field-row"><label class="flabel">Role title</label><input class="field" value="${esc(f.role)}" onchange="updateFounder('${f.id}','role',this.value)"></div>
+      </div>
+      <div class="field-row"><label class="flabel">Primary responsibilities (one per line)</label><textarea class="field" rows="3" onchange="updateFounderList('${f.id}','primary',this.value)">${(f.primary||[]).join('\n')}</textarea></div>
+      <div class="field-row"><label class="flabel">Secondary responsibilities (one per line)</label><textarea class="field" rows="3" onchange="updateFounderList('${f.id}','secondary',this.value)">${(f.secondary||[]).join('\n')}</textarea></div>
+    </div>`).join('')}
+  </div>
+  <div class="section-title">Business settings</div>
+  <div class="card">
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Target launch date</label><input class="field" type="date" value="${STATE.settings.launchDate||''}" onchange="updateSettings('launchDate',this.value)"></div>
+      <div class="field-row"><label class="flabel">Currency</label><select class="sel" onchange="updateSettings('currency',this.value)">${['GBP','EUR','USD'].map(c=>`<option ${STATE.settings.currency===c?'selected':''}>${c}</option>`).join('')}</select></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field-row"><label class="flabel">Low stock threshold (units)</label><input class="field" type="number" value="${STATE.settings.lowStockThreshold}" onchange="updateSettings('lowStockThreshold',parseInt(this.value)||0)"></div>
+      <div class="field-row"><label class="flabel">Default margin target (%)</label><input class="field" type="number" value="${STATE.settings.marginTarget}" onchange="updateSettings('marginTarget',parseInt(this.value)||0)"></div>
+    </div>
+    <div class="field-row"><label class="flabel">VAT registered?</label><select class="sel" onchange="updateSettings('vatRegistered',this.value==='true')"><option value="false" ${!STATE.settings.vatRegistered?'selected':''}>No</option><option value="true" ${STATE.settings.vatRegistered?'selected':''}>Yes</option></select></div>
+  </div>
+  <div class="stat-sub" style="margin-top:14px;">This system is not a substitute for legal, accounting or tax advice — confirm company, tax and compliance matters with a qualified professional.</div>`;
+}
+function updateFounder(id,field,value){ const f=STATE.settings.founders.find(x=>x.id===id); f[field]=value; persist(); render(); }
+function updateFounderList(id,field,value){ const f=STATE.settings.founders.find(x=>x.id===id); f[field]=value.split('\n').map(v=>v.trim()).filter(Boolean); persist(); }
+function updateSettings(field,value){ STATE.settings[field]=value; persist(); render(); }
+
+/* ================= BOOT ================= */
+(async function boot(){ await loadState(); render(); })();
+</script>
+</body>
+</html>
